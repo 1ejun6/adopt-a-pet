@@ -9,6 +9,7 @@ dotenv.config({ path: './.env' });
 
 server.set('view engine', 'ejs');
 server.use(express.urlencoded({ extended: true }));
+server.use(express.static('public'));
 
 server.use(session({
     name: 'sid',
@@ -23,7 +24,6 @@ server.use((req, res, next) => { //on every request
 });
 
 server.use('/', authcontroller);
-server.use(express.static('public'));
 
 async function connectdb() {
     try {

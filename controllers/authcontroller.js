@@ -13,14 +13,6 @@ router.get('/login', (req, res) => {
     res.render('login', { m: null, e: null });
 });
 
-router.get('/', (req, res) => {
-    return res.render('index');
-});
-
-router.get('/index.html', (req, res) => {
-    return res.render('index');
-});
-
 router.get('/home', authenticated, customer, (req, res) => {
     return res.render('customer-index', { m: `${req.session.user.email}` });
 });
