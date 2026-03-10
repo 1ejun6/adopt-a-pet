@@ -1,0 +1,24 @@
+<%const user = currentuser || null;%>
+<nav aria-label="main" style="display:flex; justify-content:space-between; align-items:center; gap:16px;">
+  <div style="display:flex; align-items:center; gap:12px;">
+    <% if (!user) { %>
+      <a href="/">adopt a pet</a>
+    <% } %>
+
+    <% if (user && user.role === 'admin') { %>
+      <a href="/admin">home</a>
+    <% } else if (user && user.role === 'customer') { %>
+      <a href="/home">home</a>
+    <% } %>
+  </div>
+
+  <div style="display:flex; align-items:center; gap:12px;">
+    <% if (user) { %>
+      <span><%= user.email %></span>
+      <a href="/logout">logout</a>
+    <% } else { %>
+      <a href="/login">login</a>
+      <a href="/register">register</a>
+    <% } %>
+  </div>
+</nav>

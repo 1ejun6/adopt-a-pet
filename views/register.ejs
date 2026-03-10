@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>register</title>
+</head>
+<body>
+    <%- include('navbar') %>
+    <% if (m) { %><p style="color:green;"><%= m %></p><% } %>
+    <% if (e) { %><p style="color:red;"><%= e %></p><% } %>
+    <form action="/register" method="post">
+        <div>
+            <label>name</label>
+            <input type="text" name="name" required>
+        </div>
+        <div>
+            <label>email</label>
+            <input type="email" name="email" required>
+        </div>
+        <div>
+            <label>password</label>
+            <input type="password" name="password" required>
+        </div>
+        <button type="submit">register</button>
+    </form>
+</body>
+</html>

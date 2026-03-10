@@ -3,12 +3,12 @@ const server = express();
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 const session = require('express-session');
-
-server.use('/', express.static('public'));
-server.use(express.urlencoded({ extended: true }));
-server.set('view engine', 'ejs');
+const authcontroller = require('./controllers/authcontroller');
 
 dotenv.config({ path: './.env' });
+
+server.set('view engine', 'ejs');
+server.use(express.urlencoded({ extended: true }));
 
 server.use(session({
     name: 'sid',
@@ -21,6 +21,9 @@ server.use((req, res, next) => { //on every request
     res.locals.currentuser = req.session ? req.session.user : null; //temporary storage box for one request
     next();
 });
+
+server.use('/', authcontroller);
+server.use(express.static('public'));
 
 async function connectdb() {
     try {
