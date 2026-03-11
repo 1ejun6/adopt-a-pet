@@ -1,9 +1,31 @@
 const express = require('express');
 const bcrypt = require('bcrypt');
-const User = require('../models/users');
-const { authenticated, admin, customer } = require('../middleware');
+const user = require('../models/users');
+const { authenticated, customer } = require('../middleware');
 
 const router = express.Router();
+
+function regeneratesession(req) {
+    return new Promise((resolve, reject) => {
+        req.session.regenerate((error) => { //method > create new session
+            if (error) {
+                return reject(error);
+            }
+            return resolve();
+        });
+    });
+}
+
+function savesession(req) {
+    return new Promise((resolve, reject) => {
+        req.session.save((error) => { //method > save session to store
+            if (error) {
+                return reject(error);
+            }
+            return resolve();
+        });
+    });
+}
 
 router.get('/register', (req, res) => {
     res.render('register', { m: null, e: null });
@@ -15,10 +37,6 @@ router.get('/login', (req, res) => {
 
 router.get('/home', authenticated, customer, (req, res) => {
     return res.render('customer-index', { m: `${req.session.user.email}` });
-});
-
-router.get('/admin', authenticated, admin, (req, res) => {
-    return res.render('admin-index', {m: `${req.session.user.email}`});
 });
 
 router.get('/logout', authenticated, (req, res) => {
@@ -41,14 +59,14 @@ router.post('/register', async (req, res) => {
         }
 
         const cemail = email.trim().toLowerCase();
-        const existinguser = await User.findOne({ email: cemail });
+        const existinguser = await user.findOne({ email: cemail });
 
         if (existinguser) {
             return res.render('register', { m: null, e: 'user already exists' });
         }
 
         const hashpassword = await bcrypt.hash(password, 10);
-        const newuser = new User({
+        const newuser = new user({
             name,
             email: cemail,
             password: hashpassword
@@ -70,7 +88,7 @@ router.post('/login', async (req, res) => {
         }
 
         const cemail = email.trim().toLowerCase();
-        const existinguser = await User.findOne({ email: cemail });
+        const existinguser = await user.findOne({ email: cemail });
         if (!existinguser) {
             return res.render('login', { m: null, e: 'invalid email or password' });
         }
@@ -80,33 +98,20 @@ router.post('/login', async (req, res) => {
             return res.render('login', { m: null, e: 'invalid email or password' });
         }
 
-        req.session.regenerate((e) => {
-            if (e) {
-                console.log('session regenerate error >', e);
-                return res.render('login', { m: null, e: 'error logging in' });
-            }
+        await regeneratesession(req);
+        req.session.user = {
+            id: existinguser._id,
+            email: existinguser.email,
+            role: existinguser.role
+        };
+        await savesession(req);
 
-            req.session.user = {
-                id: existinguser._id,
-                email: existinguser.email,
-                role: existinguser.role
-            };
+        if (existinguser.role === 'admin') {
+            return res.redirect('/admin');
+        }
 
-            req.session.save((e) => {
-                if (e) {
-                    console.log('session save error >', e);
-                    return res.render('login', { m: null, e: 'error logging in' });
-                }
-
-                if (existinguser.role === 'admin') {
-                    return res.redirect('/admin');
-                }
-
-                return res.redirect('/home');
-            });
-        });
+        return res.redirect('/home');
     } catch (error) {
-        console.log('login error >', error);
         return res.render('login', { m: null, e: 'error logging in' });
     }
 });

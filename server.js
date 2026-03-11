@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 const session = require('express-session');
 const authcontroller = require('./controllers/authcontroller');
+const admincontroller = require('./controllers/admincontroller');
 
 dotenv.config({ path: './.env' });
 
@@ -23,6 +24,7 @@ server.use((req, res, next) => { //on every request
     next();
 });
 
+server.use('/admin', admincontroller);
 server.use('/', authcontroller);
 
 async function connectdb() {

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>admin</title>
+</head>
+
+<body>
+  <%- include('../navbar') %>
+  <% if (m) { %><p style="color:green;"><%= m %></p><% } %>
+  <% if (e) { %><p style="color:red;"><%= e %></p><% } %>
+  <% if (deleted) { %>
+    <p style="color:green;"><%= deleted.length %> admin account/s deleted</p>
+    <ol style="color:green;">
+      <% deleted.map(e => { %><li><%= e %></li><% }) %>
+    </ol>
+  <% } %>
+  <% if (accounts && accounts.length > 0) { %>
+    <form method="post">
+      <table border="1">
+        <thead>
+          <tr>
+            <th>select</th>
+            <th>name</th>
+            <th>email</th>
+            <th>created date</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% accounts.map(a => { %>
+            <tr>
+              <td><input type="checkbox" name="selectedid[]" value="<%= a._id %>"></td>
+              <td><%= a.name %></td>
+              <td><%= a.email %></td>
+              <td><%= a.cdate %></td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+      <button type="submit" id="updatebutton" formaction="/admin/update" disabled>update</button>
+      <button type="submit" id="deletebutton" formaction="/admin/delete" disabled>delete</button>
+    </form>
+  <% } else { %>
+    <p>no admin accounts found</p>
+  <% } %>
+  <script>
+    const ubutton = document.getElementById('updatebutton');
+    const dbutton = document.getElementById('deletebutton');
+    document.querySelectorAll('input[name="selectedid[]"]').forEach(c => {
+      c.onchange = () => { //run function every time checkbox changes
+        const count = document.querySelectorAll('input[name="selectedid[]"]:checked').length;
+        ubutton.disabled = count !== 1;
+        dbutton.disabled = count === 0;
+      }
+    });
+    </script>
+</body>
+
+</html>
