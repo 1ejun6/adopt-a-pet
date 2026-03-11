@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>update admin account</title>
+</head>
+
+<body>
+    <%- include('../navbar') %>
+    <% if (m) { %><p style="color:green;"><%= m %></p><% } %>
+    <% if (e) { %><p style="color:red;"><%= e %></p><% } %>
+    <form action="/admin/update/<%= account._id %>" method="post">
+        <div>
+            <label>name</label>
+            <input type="text" name="name" value="<%= account.name %>" required>
+        </div>
+        <div>
+            <label>email</label>
+            <input type="email" name="email" value="<%= account.email %>" required>
+        </div>
+        <div>
+            <label>password</label>
+            <input type="password" name="password" minlength="8">
+        </div>
+        <button type="submit">update</button>
+    </form>
+</body>
+
+</html>

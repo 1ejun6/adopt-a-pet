@@ -4,11 +4,14 @@ const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 const session = require('express-session');
 const authcontroller = require('./controllers/authcontroller');
+const admincontroller = require('./controllers/admincontroller');
+const customercontroller = require('./controllers/customercontroller');
 
 dotenv.config({ path: './.env' });
 
 server.set('view engine', 'ejs');
 server.use(express.urlencoded({ extended: true }));
+server.use(express.static('public'));
 
 server.use(session({
     name: 'sid',
@@ -22,8 +25,9 @@ server.use((req, res, next) => { //on every request
     next();
 });
 
+server.use('/admin', admincontroller);
+server.use('/customer', customercontroller);
 server.use('/', authcontroller);
-server.use(express.static('public'));
 
 async function connectdb() {
     try {

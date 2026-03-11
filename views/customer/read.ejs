@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>your account</title>
+</head>
+
+<body>
+    <%- include('../navbar') %>
+    <% if (m) { %><p style="color:green;"><%= m %></p><% } %>
+    <% if (e) { %><p style="color:red;"><%= e %></p><% } %>
+    <p>name: <%= account.name %></p>
+    <p>email: <%= account.email %></p>
+    <p>created: <%= new Date(account.cdate).toLocaleString() %></p>
+</body>
+
+</html>
