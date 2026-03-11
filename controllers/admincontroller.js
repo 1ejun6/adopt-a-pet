@@ -111,11 +111,16 @@ router.post('/update/:id', authenticated, admin, async (req, res) => {
         const account = await user.findOneAndUpdate(
             { _id: req.params.id, role: 'admin' }, //filter
             { $set: updatefields }, //update operator
-            { new: true, runValidators: true, context: 'query' }
+            //updated document > schema validators > query context
+            { returnDocument: 'after', runValidators: true, context: 'query' }
         ).lean();
 
         if (!account) {
             return index(req, res, null, 'admin account not found');
+        }
+        //if user is logged in with session data > checks whether updated account is same as currently logged in admin
+        if (req.session && req.session.user && String(req.session.user.id) === String(account._id)) {
+            req.session.user.email = account.email; //updates session email so navbar updates
         }
         
         return res.render('admin/update', { m: 'admin account updated', e: null, account });

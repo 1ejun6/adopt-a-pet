@@ -32,7 +32,7 @@
               <td><input type="checkbox" name="selectedid[]" value="<%= a._id %>"></td>
               <td><%= a.name %></td>
               <td><%= a.email %></td>
-              <td><%= a.cdate %></td>
+              <td><%= (a.cdate).toLocaleString() %></td>
             </tr>
           <% }) %>
         </tbody>

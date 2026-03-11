@@ -1,7 +1,7 @@
 const express = require('express');
 const bcrypt = require('bcrypt');
 const user = require('../models/users');
-const { authenticated, customer } = require('../middleware');
+const { authenticated } = require('../middleware');
 
 const router = express.Router();
 
@@ -33,10 +33,6 @@ router.get('/register', (req, res) => {
 
 router.get('/login', (req, res) => {
     res.render('login', { m: null, e: null });
-});
-
-router.get('/home', authenticated, customer, (req, res) => {
-    return res.render('customer-index', { m: `${req.session.user.email}` });
 });
 
 router.get('/logout', authenticated, (req, res) => {
@@ -110,7 +106,7 @@ router.post('/login', async (req, res) => {
             return res.redirect('/admin');
         }
 
-        return res.redirect('/home');
+        return res.redirect('/customer');
     } catch (error) {
         return res.render('login', { m: null, e: 'error logging in' });
     }
