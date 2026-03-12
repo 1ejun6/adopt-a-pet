@@ -1,0 +1,70 @@
+<!--this index page is for guest who has not logged in or users that are already logged in-->
+<!--its for public viewing-->
+<!--they will be redirected to login page if they would like to RSVP-->
+<html>
+
+
+<body>
+
+  <h1>Upcoming Adoption Drives</h1>
+
+  <!-- RSVP messages -->
+  <% if (msg) { %>
+    <p class="msg <%= (req.query.msg === 'success') ? 'success' : 'error' %>">
+      <% if (msg === 'success') { %>
+        RSVP successful!
+      <% } else if (msg === 'already') { %>
+        You have already RSVPed for this drive.
+      <% } else if (msg === 'cancelled') { %>
+        Sorry, this adoption drive has been cancelled.
+      <% } else if (msg === 'closed') { %>
+        RSVP closed — this drive is full.
+      <% } else { %>
+        Could not RSVP. Please try again.
+      <% } %>
+    </p>
+  <% } %>
+
+  <!-- loop through drives -->
+<table border="1" cellpadding="10" cellspacing="0">
+  <thead>
+    <tr>
+      <th>Title</th>
+      <th>Location</th>
+      <th>Date</th>
+      <th>Description</th>
+      <th>Capacity</th>
+      <th>RSVP</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% drives.forEach(drive => { %>
+      <tr>
+        <td><%= drive.title %></td>
+        <td><%= drive.location %></td>
+        <td><%= drive.eventDate.toDateString() %></td>
+        <td><%= drive.description %></td>
+        <td><%= drive.attendees.length %> / <%= drive.maxCapacity %></td>
+        <td>
+          <% if (drive.status === 'open') { %>
+            <% if (currentuser && currentuser.role === 'user') { %>
+              <form action="/adoption-drives/<%= drive._id %>/rsvp" method="POST">
+                <button type="submit">RSVP</button>
+              </form>
+            <% } else if (!currentuser) { %>
+              <a href="/login">Login</a> /
+              <a href="/register">Register</a>
+            <% } %>
+          <% } else if (drive.status === 'closed') { %>
+            Closed
+          <% } else if (drive.status === 'cancelled') { %>
+            Cancelled
+          <% } %>
+        </td>
+      </tr>
+    <% }) %>
+  </tbody>
+</table>
+
+</body>
+</html>
