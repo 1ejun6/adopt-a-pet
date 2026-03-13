@@ -1,13 +1,9 @@
-const express = require('express');
 const bcrypt = require('bcrypt');
 const user = require('../models/users');
-const { authenticated, customer } = require('../middleware');
-
-const router = express.Router();
 
 async function read(req, res, id, m = null, e = null) {
     try {
-        const account = await user.findOne({ _id: id, role: 'customer' }).lean();
+        const account = await user.findcustomerbyid(id);
         if (!account) {
             return res.render('error', { e: 'customer account not found' });
         }
@@ -19,7 +15,7 @@ async function read(req, res, id, m = null, e = null) {
 
 async function update(req, res, id, m = null, e = null) {
     try {
-        const account = await user.findOne({ _id: id, role: 'customer' }).lean();
+        const account = await user.findcustomerbyid(id);
         if (!account) {
             return res.render('error', { e: 'customer account not found' });
         }
@@ -29,19 +25,19 @@ async function update(req, res, id, m = null, e = null) {
     }
 }
 
-router.get('/', authenticated, customer, async (req, res) => {
+async function index(req, res) {
     return res.render('customer-index', { m: `${req.session.user.email}` });
-});
+}
 
-router.get('/read', authenticated, customer, async (req, res) => {
+async function readaccount(req, res) {
     return read(req, res, req.session.user.id, null, null);
-});
+}
 
-router.get('/update', authenticated, customer, async (req, res) => {
+async function updateview(req, res) {
     return update(req, res, req.session.user.id, null, null);
-});
+}
 
-router.post('/update', authenticated, customer, async (req, res) => {
+async function updateaccount(req, res) {
     try {
         const { name, email, password } = req.body;
         if (!name || !email) {
@@ -49,7 +45,7 @@ router.post('/update', authenticated, customer, async (req, res) => {
         }
 
         const cemail = email.trim().toLowerCase();
-        const existinguser = await user.findOne({ email: cemail, _id: { $ne: req.session.user.id } });
+        const existinguser = await user.findonebyemailexcludingid(cemail, req.session.user.id);
         if (existinguser) {
             return update(req, res, req.session.user.id, null, 'email already exists > please enter another email');
         }
@@ -59,11 +55,7 @@ router.post('/update', authenticated, customer, async (req, res) => {
             updatefields.password = await bcrypt.hash(password, 10);
         }
 
-        const account = await user.findOneAndUpdate(
-            { _id: req.session.user.id, role: 'customer' },
-            { $set: updatefields },
-            { returnDocument: 'after', runValidators: true, context: 'query' }
-        ).lean();
+        const account = await user.updatecustomerbyid(req.session.user.id, updatefields);
 
         if (!account) {
             return res.render('error', { e: 'customer account not found' });
@@ -74,6 +66,6 @@ router.post('/update', authenticated, customer, async (req, res) => {
     } catch (error) {
         return update(req, res, req.session.user.id, null, 'error updating account');
     }
-});
+}
 
-module.exports = router;
+module.exports = {index, readaccount, updateview, updateaccount};
