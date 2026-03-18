@@ -1,0 +1,60 @@
+<html>
+<%- include('../navbar') %>
+    <h1>Update Pet</h1>
+    <form action="/pet/admin/update-pet?pet=<%= currentPet.pid %>" method="POST">
+        <table border="1">
+            <tr>
+                <td><label>Pet ID</label></td>
+                <td><input type="number" value="<%= currentPet.pid %>" disabled></td>
+                <input type="hidden" name="pid" value="<%= currentPet.pid %>">
+            </tr>
+
+            <tr>
+                <td><label>Name</label></td>
+                <td><input type="text" name="name" value="<%= currentPet.name %>" required></td>
+            </tr>
+
+            <tr>
+                <td><label>Species</label></td>
+                <td><input type="text" name="species" value="<%= currentPet.species %>" required></td>
+            </tr>
+
+            <tr>
+                <td><label>Age</label></td>
+                <td><input type="number" name="age" value="<%= currentPet.age %>" required></td>
+            </tr>
+
+            <tr>
+                <td><label>Weight</label></td>
+                <td><input type="number" name="weight" step="0.1" value="<%= currentPet.weight %>" required></td>
+            </tr>
+
+            <tr>
+                <td><label>Health</label></td>
+                <td><input type="text" name="health" value="<%= currentPet.health %>" required></td>
+            </tr>
+
+            <tr>
+                <td><label>Status</label></td>
+                <td><input type="text" name="status" value="<%= currentPet.status %>" required></td>
+            </tr>
+
+            <tr>
+                <td><label>Description</label></td>
+                <td>
+                    <textarea name="description" rows="4" cols="40"><%= currentPet.description || '' %></textarea>
+                </td>
+            </tr>
+
+            <tr>
+                <td><label>Image URL</label></td>
+                <td><input type="text" name="imageURL" value="<%= currentPet.imageURL || '' %>"></td>
+            </tr>
+        </table>
+
+        <br>
+        <button type="submit">Save Changes</button>
+
+    </form>
+
+</html>

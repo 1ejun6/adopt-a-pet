@@ -1,0 +1,35 @@
+<html>
+    <%- include('../navbar') %>
+    <h1>Adopt a Pet!</h1>
+    <h3>Our furry little friends who are looking for a new home!</h3>
+    <form action="adoption-application" method="post">
+    <table border="1">
+        <tr>
+            <th>Name</th>
+            <th>Species</th>
+            <th>Age</th>
+            <th>Weight</th>
+            <th>Health</th>
+            <th>Status</th>
+            <th>Description</th>
+            <th>Photo</th>
+            <th>Select</th>
+        </tr>
+        <% pets.forEach( pet => { %>
+        <tr>
+            <td><%= pet.name %></td>
+            <td><%= pet.species %></td>
+            <td><%= pet.age %> years old</td>
+            <td><%= pet.weight %> kg</td>
+            <td><%= pet.health %></td>
+            <td><%= pet.status %></td>
+            <td><%= pet.description %></td>
+            <td><img width="300" height="250" src="<%= pet.imageURL %>"></td>
+            <td><input type="radio" name="pet" value="<%= pet.pid %>"></td>
+        </tr>
+        <% }) %>
+    </table>
+        <br>
+        <button type="submit">Adopt!</button>
+    </form>
+</html>

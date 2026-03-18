@@ -6,6 +6,8 @@ const session = require('express-session');
 const authroutes = require('./routes/auth');
 const adminroutes = require('./routes/admin');
 const customerroutes = require('./routes/customer');
+const petadminroutes = require('./routes/petadmin');
+const petcustomerroutes = require('./routes/petcustomer');
 
 dotenv.config({ path: './.env' });
 
@@ -28,6 +30,8 @@ server.use((req, res, next) => { //on every request
 server.use('/admin', adminroutes);
 server.use('/customer', customerroutes);
 server.use('/', authroutes);
+server.use('/pet/admin', petadminroutes);
+server.use('/pet/customer', petcustomerroutes);
 
 async function connectdb() {
     try {
