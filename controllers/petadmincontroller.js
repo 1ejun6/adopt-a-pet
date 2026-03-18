@@ -11,7 +11,7 @@ exports.managePet = async (req, res) => {
 }
 
 exports.displayCreatePet = (req, res) => {
-    return res.render("admin/create-pet", {} );
+    return res.render("admin/create-pet", {});
 }
 
 exports.createPet = async (req, res) => {
@@ -66,6 +66,39 @@ exports.showUpdatePet = async (req, res) => {
     }
 }
 
+exports.handleUpdateDeletePet = async (req, res) => {
+    const pid = req.query.pid;
+    const action = req.query.action;
+
+    if (!pid) {
+        return res.send('Missing pet ID!');
+    }
+
+    if (action === 'delete') {
+        try {
+            await pet.deletePet(pid);
+            return res.send(`Pet deleted successfully!<br>
+            <a href="/pet/admin">View all the pets</a>
+            `);
+        } catch (e) {
+            return res.render("error", { e });
+        }
+    }
+
+    try {
+        const currentPet = await pet.getPetbyPID(Number(pid));
+        if (!currentPet) {
+            return res.send(`Pet not found
+                <a href="/pet/admin">Go back</a>`);
+        }
+
+        return res.render(`admin/update-pet`, { currentPet })
+        
+    } catch (e) {
+        return res.render("error", { e })
+    }
+}
+
 exports.updatePet = async (req, res) => {
     const pid = req.body.pid;
     const name = req.body.name;
@@ -97,29 +130,6 @@ exports.updatePet = async (req, res) => {
         const updatedPet = await pet.updatePet(Number(pid), petData)
         res.send(`
             Pet updated successfully!<br>
-            <a href="/pet/admin">View all the pets</a>
-            `)
-    } catch (e) {
-        res.render("error", { e })
-    }
-}
-
-exports.showDeletePet = async (req, res) => {
-    try {
-        const pets = await pet.getAllPets();
-
-        res.render("admin/delete-pet", { pets })
-    } catch (e) {
-        res.render("error", { e })
-    }
-}
-
-exports.deletePet = async (req, res) => {
-    const pid = req.body.pid;
-    
-    try {
-        await pet.deletePet(pid);
-        res.send(`Pet deleted successfully!<br>
             <a href="/pet/admin">View all the pets</a>
             `)
     } catch (e) {

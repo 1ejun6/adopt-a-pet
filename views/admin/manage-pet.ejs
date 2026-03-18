@@ -1,6 +1,6 @@
 <html>
     <%- include('../navbar') %>
-    <h1>Update a Pet</h1>
+    <h1>Manage a Pet</h1>
     <form action="/pet/admin/update-pet" method="GET">
     <table border="1">
         <tr>
@@ -29,6 +29,7 @@
         <% }) %>
     </table>
     <br>
-    <button type="submit">Update Pet!</button>
+    <button type="submit" name="action" value="update">Update Pet!</button>
+    <button type="submit" name="action" value="delete">Delete Pet!</button>
     </form>
 </html>
