@@ -1,5 +1,7 @@
 <html>
     <%- include('../navbar') %>
+    <% if (m) { %><p style="color:green;"><%= m %></p><% } %>
+    <% if (e) { %><p style="color:red;"><%= e %></p><% } %>
     <h1>Create a pet!</h1>
 
     <form action="/pet/admin/create-pet" method="POST">
@@ -18,11 +20,11 @@
     </tr>
     <tr>
       <td><label for="age"><strong>Age</strong></label></td>
-      <td><input type="number" id="age" name="age" required></td>
+      <td><input type="number" id="age" name="age" step="1" required></td>
     </tr>
     <tr>
       <td><label for="weight"><strong>Weight</strong></label></td>
-      <td><input type="number" id="weight" name="weight" step="0.1" required></td>
+      <td><input type="number" id="weight" name="weight" step="0.01" required></td>
     </tr>
     <tr>
       <td><label for="health"><strong>Health</strong></label></td>
@@ -40,11 +42,11 @@
     </tr>
     <tr>
       <td><label for="description"><strong>Description</strong></label></td>
-      <td><textarea id="description" name="description" rows="4" cols="40"></textarea></td>
+      <td><textarea id="description" name="description" rows="4" cols="40" required></textarea></td>
     </tr>
     <tr>
       <td><label for="imageURL"><strong>Image URL</strong></label></td>
-      <td><input type="text" id="imageURL" name="imageURL"></td>
+      <td><input type="text" id="imageURL" name="imageURL" required></td>
     </tr>
  </table>
  <br>

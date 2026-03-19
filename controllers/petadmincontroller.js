@@ -4,14 +4,14 @@ exports.managePet = async (req, res) => {
     try {
         const pets = await pet.getAllPets();
 
-        res.render("admin/manage-pet", { pets })
+        return res.render("admin/manage-pet", { pets, m: null, e: null })
     } catch (e) {
-        res.render("error", { e })
+        return res.render("error", { e: "Error loading pets" })
     }
 }
 
 exports.displayCreatePet = (req, res) => {
-    return res.render("admin/create-pet", {});
+    return res.render("admin/create-pet", { m: null, e: null });
 }
 
 exports.createPet = async (req, res) => {
@@ -39,13 +39,10 @@ exports.createPet = async (req, res) => {
 
     try {
         await pet.createPet(petData);
-        res.send(`
-            New pet created successfully!
-            <br>
-            <a href="/pet/admin">View all the pets</a>
-            `);
+        const pets = await pet.getAllPets();
+        return res.render("admin/manage-pet", { pets, m: "New pet created successfully!", e: null });
     } catch (e) {
-        res.render("error", { e })
+        return res.render("error", { m: null, e: "Error creating pet" })
     }
 }
 
@@ -53,16 +50,14 @@ exports.showUpdatePet = async (req, res) => {
     const pid = req.query.pid;
 
     if (!pid) {
-        return res.send(
-            `Missing pet ID!`
-        )
+        return res.render("error", { e: "Please select a pet!" });
     }
 
     try {
         const currentPet = await pet.getPetbyPID(Number(pid))
-        return res.render("admin/update-pet", { currentPet })
+        return res.render("admin/update-pet", { currentPet, m: null, e: null })
     } catch (e) {
-        res.render("error", { e })
+        return res.render("error", { e: "Error loading pet" })
     }
 }
 
@@ -71,31 +66,29 @@ exports.handleUpdateDeletePet = async (req, res) => {
     const action = req.query.action;
 
     if (!pid) {
-        return res.send('Missing pet ID!');
+        return res.render("error", { e: "Please select a pet!" });
     }
 
     if (action === 'delete') {
         try {
             await pet.deletePet(pid);
-            return res.send(`Pet deleted successfully!<br>
-            <a href="/pet/admin">View all the pets</a>
-            `);
+            const pets = await pet.getAllPets();
+            return res.render("admin/manage-pet", { pets, m: "Pet deleted successfully!", e: null });
         } catch (e) {
-            return res.render("error", { e });
+            return res.render("error", { e: "Error deleting pet" });
         }
     }
 
     try {
         const currentPet = await pet.getPetbyPID(Number(pid));
         if (!currentPet) {
-            return res.send(`Pet not found
-                <a href="/pet/admin">Go back</a>`);
+            return res.render("error", { e: "Pet not found" });
         }
 
-        return res.render(`admin/update-pet`, { currentPet })
-        
+        return res.render(`admin/update-pet`, { currentPet, m: null, e: null })
+
     } catch (e) {
-        return res.render("error", { e })
+        return res.render("error", { e: "Error loading pet" })
     }
 }
 
@@ -112,7 +105,7 @@ exports.updatePet = async (req, res) => {
 
     if (!name || !species || !age || !weight || !health || !status) {
         const currentPet = await pet.getPetbyPID(pid);
-        return res.render("admin/update-pet", { currentPet });
+        return res.render("admin/update-pet", { currentPet, m: null, e: "All required fields must be filled in" });
     }
 
     const petData = {
@@ -128,11 +121,9 @@ exports.updatePet = async (req, res) => {
 
     try {
         const updatedPet = await pet.updatePet(Number(pid), petData)
-        res.send(`
-            Pet updated successfully!<br>
-            <a href="/pet/admin">View all the pets</a>
-            `)
+        const pets = await pet.getAllPets();
+        return res.render("admin/manage-pet", { pets, m: "Pet updated successfully!", e: null });
     } catch (e) {
-        res.render("error", { e })
+        return res.render("error", { e: "Error updating pet" })
     }
 }

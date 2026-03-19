@@ -1,5 +1,7 @@
 <html>
     <%- include('../navbar') %>
+    <% if (m) { %><p style="color:green;"><%= m %></p><% } %>
+    <% if (e) { %><p style="color:red;"><%= e %></p><% } %>
     <h1>Manage a Pet</h1>
     <form action="/pet/admin/update-pet" method="GET">
     <table border="1">
