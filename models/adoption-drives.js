@@ -28,12 +28,15 @@ const adoptiondriveschema = new mongoose.Schema({
         required: [true, 'max capacity required']
     },
 
-    attendees: [
+    attendees: {
+    type: [
         {
-            type: mongoose.Schema.Types.ObjectId, 
-            ref: 'users'
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'users'
         }
     ],
+    default: []
+    },
 
     cby: {
         type: mongoose.Schema.Types.ObjectId, 
@@ -52,4 +55,6 @@ const adoptiondriveschema = new mongoose.Schema({
         type: Date,
         default: Date.now
     }
-})
+});
+
+module.exports = mongoose.model('AdoptionDrive', adoptiondriveschema);
