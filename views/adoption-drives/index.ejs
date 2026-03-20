@@ -12,23 +12,6 @@
 
   <h1>Upcoming Adoption Drives</h1>
 
-  <!-- RSVP messages -->
-  <% if (msg) { %>
-    <p class="msg <%= (msg === 'success') ? 'success' : 'error' %>">
-      <% if (msg === 'success') { %>
-        RSVP successful!
-      <% } else if (msg === 'already') { %>
-        You have already RSVPed for this drive.
-      <% } else if (msg === 'cancelled') { %>
-        Sorry, this adoption drive has been cancelled.
-      <% } else if (msg === 'closed') { %>
-        RSVP closed — this drive is full.
-      <% } else { %>
-        Could not RSVP. Please try again.
-      <% } %>
-    </p>
-  <% } %>
-
   <!-- loop through drives -->
 <table border="1" cellpadding="10" cellspacing="0">
   <thead>
@@ -52,12 +35,11 @@
         <td>
           <% if (drive.status === 'open') { %>
             <% if (currentuser) { %>
-              <form action="/adoption-drives/<%= drive._id %>/rsvp" method="POST">
+              <form action="/adoption-drives/<%= drive._id %>/rsvp" method="post">
                 <button type="submit">RSVP</button>
               </form>
             <% } else { %>
-              <form action="/login" method="GET">
-                <input type="hidden" name="redirect" value="/adoption-drives/<%= drive._id %>/rsvp">
+              <form action="/login" method="get">
                 <button type="submit">RSVP</button>
               </form>
             <% } %>
