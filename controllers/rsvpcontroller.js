@@ -23,10 +23,6 @@ router.post("/adoption-drives/:id/rsvp", authenticated , async (req, res) => {
             return res.redirect('/customer/adoption-drives?msg=closed');
         }
 
-        if (drive.attendees.includes(userId)) {
-            return res.redirect('/customer/adoption-drives?msg=already');
-        }
-
         drive.attendees.push(userId);
 
         if (drive.attendees.length >= drive.mcapacity) {
@@ -41,5 +37,32 @@ router.post("/adoption-drives/:id/rsvp", authenticated , async (req, res) => {
         return res.redirect('/customer/adoption-drives?msg=error');
     }
 })
+
+router.post('/adoption-drives/:id/unrsvp', authenticated, async (req, res) => {
+    try {
+        const driveId = req.params.id;
+        const userId = req.session.user.id;
+
+        const drive = await AdoptionDrive.findById(driveId);
+
+        if (!drive) {
+            return res.redirect('/customer/adoption-drives?msg=notfound');
+        }
+
+        drive.attendees = drive.attendees.filter(
+            attendee => attendee.toString() !== userId.toString()
+        );
+
+        if (drive.status === 'closed' && drive.attendees.length < drive.mcapacity) {
+            drive.status = 'open';
+        }
+
+        await drive.save();
+        return res.redirect('/customer/adoption-drives?msg=unrsvp');
+    } catch (err) {
+        console.log('Un-RSVP error:', err);
+        return res.redirect('/customer/adoption-drives?msg=error');
+    }
+});
 
 module.exports = router;
