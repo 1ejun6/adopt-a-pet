@@ -24,6 +24,7 @@
       <% } %>
     </p>
   <% } %>
+  
 
   <table border="1" cellpadding="10" cellspacing="0">
     <thead>
@@ -49,7 +50,7 @@
               <% if (drive.attendees.some(attendee => attendee.toString() === currentuser.id.toString())) { %>
                 Already RSVPed
               <% } else { %>
-                <form action="/adoption-drives/<%= drive._id %>/rsvp" method="POST">
+                <form action="/adoption-drives/<%= drive._id %>/rsvp" method="post">
                   <button type="submit">RSVP</button>
                 </form>
               <% } %>
@@ -63,6 +64,8 @@
       <% }) %>
     </tbody>
   </table>
+  <a href="/customer">Back to Customer Home</a>
+  <br><br>
 
 </body>
 </html>
