@@ -6,10 +6,10 @@
 <body>
     <h1>Manage Adoption Drives</h1>
 
-    <a href="/admin">Back to Admin Home</a>
+    <a href="/admin">back to admin home</a>
     <br><br>
 
-    <a href="/admin/adoption-drives/create">Create New Drive</a>
+    <a href="/admin/adoption-drives/create">create new drive</a>
 
     <% if (e) { %>
         <p><%= e %></p>
@@ -27,10 +27,10 @@
                 <p><strong>Capacity:</strong> <%= drive.attendees.length %> / <%= drive.mcapacity %></p>
                 <p><strong>Status:</strong> <%= drive.status %></p>
 
-                <a href="/admin/adoption-drives/<%= drive._id %>/edit">Edit</a>
+                <a href="/admin/adoption-drives/<%= drive._id %>/edit">edit</a>
 
                 <form action="/admin/adoption-drives/<%= drive._id %>/delete" method="post" style="display:inline;">
-                    <button type="submit">Delete</button>
+                    <button type="submit">delete</button>
                 </form>
             </div>
         <% }) %>
