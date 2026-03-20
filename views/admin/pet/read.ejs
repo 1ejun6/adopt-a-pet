@@ -4,8 +4,16 @@
     <% if (e) { %><p style="color:red;"><%= e %></p><% } %>
     <h1>Manage a Pet</h1>
     <form action="/admin/pet/action" method="GET">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+        <div>
+            <button type="submit" name="action" value="update">Update</button>
+            <button type="submit" name="action" value="delete">Delete</button>
+        </div>
+        <button type="submit" formmethod="get" formaction="/admin/pet/create">Create</button>
+    </div>
     <table border="1">
         <tr>
+            <th style="width:30px; text-align:center; vertical-align:middle;"></th>
             <th>Name</th>
             <th>Species</th>
             <th>Age</th>
@@ -14,10 +22,10 @@
             <th>Status</th>
             <th>Description</th>
             <th>Photo</th>
-            <th>Select</th>
         </tr>
         <% pets.forEach( pet => { %>
             <tr>
+                <td style="text-align:center; vertical-align:middle;"><input type="radio" name="pid" value="<%= pet.pid %>"></td>
                 <td><%= pet.name %></td>
                 <td><%= pet.species %></td>
                 <td><%= pet.age %> years old</td>
@@ -26,12 +34,8 @@
                 <td><%= pet.status %></td>
                 <td><%= pet.description %></td>
                 <td><img width="300" height="250" src="<%= pet.imageURL %>"></td>
-                <td><input type="radio" name="pid" value="<%= pet.pid %>"></td>
             </tr>
         <% }) %>
     </table>
-    <br>
-    <button type="submit" name="action" value="update">Update Pet!</button>
-    <button type="submit" name="action" value="delete">Delete Pet!</button>
     </form>
 </html>
