@@ -12,33 +12,33 @@ router.post("/adoption-drives/:id/rsvp", authenticated , async (req, res) => {
         const drive = await AdoptionDrive.findById(driveId);
 
         if (!drive) {
-            return res.redirect('/adoption-drives?msg=notfound');
+            return res.redirect('/customer/adoption-drives?msg=notfound');
         }
 
         if (drive.status === 'cancelled') {
-            return res.redirect('/adoption-drives?msg=cancelled');
+            return res.redirect('/customer/adoption-drives?msg=cancelled');
         }
 
         if (drive.status === 'closed') {
-            return res.redirect('/adoption-drives?msg=closed');
+            return res.redirect('/customer/adoption-drives?msg=closed');
         }
 
         if (drive.attendees.includes(userId)) {
-            return res.redirect('/adoption-drives?msg=already');
+            return res.redirect('/customer/adoption-drives?msg=already');
         }
 
         drive.attendees.push(userId);
 
-        if (drive.attendees.length >= drive.maxCapacity) {
+        if (drive.attendees.length >= drive.mcapacity) {
             drive.status = 'closed';
         }
 
         await drive.save();
-        return res.redirect('/adoption-drives?msg=success');
+        return res.redirect('/customer/adoption-drives?msg=success');
 
     } catch (err) {
         console.log('RSVP error:', err);
-        return res.redirect('/adoption-drives?msg=error');
+        return res.redirect('/customer/adoption-drives?msg=error');
     }
 })
 
