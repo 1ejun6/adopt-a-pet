@@ -8,6 +8,8 @@ const admincontroller = require('./controllers/admincontroller');
 const customercontroller = require('./controllers/customercontroller');
 const guestadoptdrivecontroller = require('./controllers/guestadoptdrivecontroller');
 const rsvpcontroller = require('./controllers/rsvpcontroller');
+const adminAdoptDriveController = require('./controllers/adminadoptdrivecontroller');
+const customeradoptdrivecontroller = require('./controllers/customeradoptdrivecontroller');
 
 dotenv.config({ path: './.env' });
 
@@ -32,6 +34,8 @@ server.use('/customer', customercontroller);
 server.use('/', authcontroller);
 server.use('/', guestadoptdrivecontroller);
 server.use('/', rsvpcontroller);
+server.use('/admin', adminAdoptDriveController);
+server.use('/customer', customeradoptdrivecontroller);
 
 async function connectdb() {
     try {
