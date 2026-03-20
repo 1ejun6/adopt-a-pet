@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Create Drive</title>
+</head>
+<body>
+    <h1>Create Adoption Drive</h1>
+
+    <% if (e) { %>
+        <p><%= e %></p>
+    <% } %>
+
+    <form action="/admin/adoption-drives/create" method="POST">
+        <p>Title:</p>
+        <input type="text" name="title" required>
+
+        <p>Location:</p>
+        <input type="text" name="location" required>
+
+        <p>Date:</p>
+        <input type="date" name="eventdate" required>
+
+        <p>Description:</p>
+        <textarea name="description"></textarea>
+
+        <p>Max Capacity:</p>
+        <input type="number" name="mcapacity" min="1" required>
+
+        <br><br>
+        <button type="submit">Create Drive</button>
+    </form>
+
+    <br>
+    <a href="/admin/adoption-drives">Back to Manage Drive</a>
+</body>
+</html>
