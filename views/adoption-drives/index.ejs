@@ -14,7 +14,7 @@
 
   <!-- RSVP messages -->
   <% if (msg) { %>
-    <p class="msg <%= (req.query.msg === 'success') ? 'success' : 'error' %>">
+    <p class="msg <%= (msg === 'success') ? 'success' : 'error' %>">
       <% if (msg === 'success') { %>
         RSVP successful!
       <% } else if (msg === 'already') { %>
@@ -46,18 +46,20 @@
       <tr>
         <td><%= drive.title %></td>
         <td><%= drive.location %></td>
-        <td><%= drive.eventDate.toDateString() %></td>
+        <td><%= drive.eventdate.toDateString() %></td>
         <td><%= drive.description %></td>
-        <td><%= drive.attendees.length %> / <%= drive.maxCapacity %></td>
+        <td><%= drive.attendees.length %> / <%= drive.mcapacity %></td>
         <td>
           <% if (drive.status === 'open') { %>
-            <% if (currentuser && currentuser.role === 'user') { %>
+            <% if (currentuser) { %>
               <form action="/adoption-drives/<%= drive._id %>/rsvp" method="POST">
                 <button type="submit">RSVP</button>
               </form>
-            <% } else if (!currentuser) { %>
-              <a href="/login">Login</a> /
-              <a href="/register">Register</a>
+            <% } else { %>
+              <form action="/login" method="GET">
+                <input type="hidden" name="redirect" value="/adoption-drives/<%= drive._id %>/rsvp">
+                <button type="submit">RSVP</button>
+              </form>
             <% } %>
           <% } else if (drive.status === 'closed') { %>
             Closed
