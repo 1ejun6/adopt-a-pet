@@ -10,7 +10,7 @@
         <p><%= e %></p>
     <% } %>
 
-    <form action="/admin/adoption-drives/<%= drive._id %>/edit" method="POST">
+    <form action="/admin/adoption-drives/<%= drive._id %>/edit" method="post">
         <p>Title:</p>
         <input type="text" name="title" value="<%= drive.title %>" required>
 
