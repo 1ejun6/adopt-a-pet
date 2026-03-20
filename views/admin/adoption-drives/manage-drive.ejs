@@ -6,6 +6,9 @@
 <body>
     <h1>Manage Adoption Drives</h1>
 
+    <a href="/admin">Back to Admin Home</a>
+    <br><br>
+
     <a href="/admin/adoption-drives/create">Create New Drive</a>
 
     <% if (e) { %>
@@ -26,7 +29,7 @@
 
                 <a href="/admin/adoption-drives/<%= drive._id %>/edit">Edit</a>
 
-                <form action="/admin/adoption-drives/<%= drive._id %>/delete" method="POST" style="display:inline;">
+                <form action="/admin/adoption-drives/<%= drive._id %>/delete" method="post" style="display:inline;">
                     <button type="submit">Delete</button>
                 </form>
             </div>
