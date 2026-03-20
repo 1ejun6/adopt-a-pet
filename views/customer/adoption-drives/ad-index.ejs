@@ -13,8 +13,8 @@
     <p class="msg <%= (msg === 'success') ? 'success' : 'error' %>">
       <% if (msg === 'success') { %>
         RSVP successful!
-      <% } else if (msg === 'already') { %>
-        You have already RSVPed for this drive.
+      <% } else if (msg === 'unrsvp') { %>
+        You have successfully cancelled your RSVP.
       <% } else if (msg === 'cancelled') { %>
         Sorry, this adoption drive has been cancelled.
       <% } else if (msg === 'closed') { %>
@@ -48,14 +48,22 @@
           <td>
             <% if (drive.status === 'open') { %>
               <% if (drive.attendees.some(attendee => attendee.toString() === currentuser.id.toString())) { %>
-                Already RSVPed
+                <form action="/adoption-drives/<%= drive._id %>/unrsvp" method="post">
+                  <button type="submit">Un-RSVP</button>
+                </form>
               <% } else { %>
                 <form action="/adoption-drives/<%= drive._id %>/rsvp" method="post">
                   <button type="submit">RSVP</button>
                 </form>
               <% } %>
             <% } else if (drive.status === 'closed') { %>
-              Closed
+              <% if (drive.attendees.some(attendee => attendee.toString() === currentuser.id.toString())) { %>
+                <form action="/adoption-drives/<%= drive._id %>/unrsvp" method="post">
+                  <button type="submit">Un-RSVP</button>
+                </form>
+              <% } else { %>
+                Closed
+              <% } %>
             <% } else if (drive.status === 'cancelled') { %>
               Cancelled
             <% } %>
@@ -64,7 +72,7 @@
       <% }) %>
     </tbody>
   </table>
-  <a href="/customer">Back to Customer Home</a>
+  <a href="/customer">back to customer home</a>
   <br><br>
 
 </body>
