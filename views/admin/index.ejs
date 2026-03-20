@@ -37,7 +37,8 @@
           <% }) %>
         </tbody>
       </table>
-      <button type="submit" id="updatebutton" formaction="/admin/update" disabled>update</button>
+    <!--formaction is submit url for that specific button-->
+      <button type="submit" id="updatebutton" formmethod="get" formaction="/admin/update" disabled>update</button>
       <button type="submit" id="deletebutton" formaction="/admin/delete" disabled>delete</button>
     </form>
   <% } else { %>
@@ -49,8 +50,14 @@
     document.querySelectorAll('input[name="selectedid[]"]').forEach(c => {
       c.onchange = () => { //run function every time checkbox changes
         const count = document.querySelectorAll('input[name="selectedid[]"]:checked').length;
+        //finds all checked inputs with name selectedid[]
+        //returns a list of <input type="checkbox"> objects
+        //converts the nodelist into a normal array
+        const ids = Array.from(document.querySelectorAll('input[name="selectedid[]"]:checked')).map(c => c.value);
         ubutton.disabled = count !== 1;
         dbutton.disabled = count === 0;
+        ubutton.formAction = count === 1 ? `/admin/update/${ids[0]}` : '/admin/update';
+        dbutton.formAction = ids.length ? `/admin/delete/${ids.join('-')}` : '/admin/delete';
       }
     });
     </script>

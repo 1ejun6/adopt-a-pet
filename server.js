@@ -30,8 +30,8 @@ server.use((req, res, next) => { //on every request
 server.use('/admin', adminroutes);
 server.use('/customer', customerroutes);
 server.use('/', authroutes);
-server.use('/pet/admin', petadminroutes);
-server.use('/pet/customer', petcustomerroutes);
+server.use('/admin/pet', petadminroutes);
+server.use('/customer/pet', petcustomerroutes);
 
 async function connectdb() {
     try {

@@ -15,6 +15,10 @@ async function index(req, res) {
     return renderindex(req, res);
 }
 
+async function updateview(req, res) {
+    return update(req, res, req.params.id);
+}
+
 async function update(req, res, id, m = null, e = null) {
     try {
         const account = await user.findadminbyid(id);
@@ -59,7 +63,7 @@ async function create(req, res) {
 
 async function deleteaccounts(req, res) {
     try {
-        const sids = convertarray(req.body.selectedid);
+        const sids = convertarray(req.params.id ? req.params.id.split('-') : []);
         if (sids.length === 0) {
             return renderindex(req, res, null, 'select at least one account to delete');
         }
@@ -74,15 +78,6 @@ async function deleteaccounts(req, res) {
     } catch (error) {
         return renderindex(req, res, null, 'error deleting admin account/s');
     }
-}
-
-async function selectupdate(req, res) {
-    const sids = convertarray(req.body.selectedid);
-    if (sids.length !== 1) {
-        return renderindex(req, res, null, 'select exactly one account to update');
-    }
-
-    return update(req, res, sids[0]);
 }
 
 async function saveupdate(req, res) {
@@ -120,4 +115,4 @@ async function saveupdate(req, res) {
     }
 }
 
-module.exports = {index, createview, create, deleteaccounts, selectupdate, saveupdate};
+module.exports = {index, createview, create, updateview, deleteaccounts, saveupdate};

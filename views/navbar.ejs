@@ -8,13 +8,13 @@
     <% if (user && user.role === 'admin') { %>
       <a href="/admin">home</a>
       <a href="/admin/create">create admin account</a>
-      <a href="/pet/admin">manage pet listings</a>
-      <a href="/pet/admin/create-pet">list a new pet</a>
+      <a href="/admin/pet">manage pet listings</a>
+      <a href="/admin/pet/create">list a new pet</a>
     <% } else if (user && user.role === 'customer') { %>
       <a href="/customer">home</a>
       <a href="/customer/read">view account</a>
       <a href="/customer/update">update account</a>
-      <a href="/pet/customer">adopt a pet</a>
+      <a href="/customer/pet">adopt a pet</a>
     <% } %>
   </div>
 

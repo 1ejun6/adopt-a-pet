@@ -4,7 +4,7 @@ exports.readPet = async (req, res) => {
     try {
         const pets = await pet.getAllPets();
 
-        res.render("customer/view-pet", { pets })
+        res.render("customer/pet/read", { pets })
     } catch (e) {
         res.render("error", { e })
     }

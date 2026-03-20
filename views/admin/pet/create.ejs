@@ -1,10 +1,10 @@
 <html>
-    <%- include('../navbar') %>
+    <%- include('../../navbar') %>
     <% if (m) { %><p style="color:green;"><%= m %></p><% } %>
     <% if (e) { %><p style="color:red;"><%= e %></p><% } %>
     <h1>Create a pet!</h1>
 
-    <form action="/pet/admin/create-pet" method="POST">
+    <form action="/admin/pet/create" method="POST">
  <table>
     <tr>
       <td><label for="pid"><strong>Pet ID</strong></label></td>
