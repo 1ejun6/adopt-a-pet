@@ -1,0 +1,41 @@
+<html>
+    <%- include('../../navbar') %>
+    <% if (m) { %><p style="color:green;"><%= m %></p><% } %>
+    <% if (e) { %><p style="color:red;"><%= e %></p><% } %>
+    <h1>Manage a Pet</h1>
+    <form action="/admin/pet/action" method="GET">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+        <div>
+            <button type="submit" name="action" value="update">Update</button>
+            <button type="submit" name="action" value="delete">Delete</button>
+        </div>
+        <button type="submit" formmethod="get" formaction="/admin/pet/create">Create</button>
+    </div>
+    <table border="1">
+        <tr>
+            <th style="width:30px; text-align:center; vertical-align:middle;"></th>
+            <th>Name</th>
+            <th>Species</th>
+            <th>Age</th>
+            <th>Weight</th>
+            <th>Health</th>
+            <th>Status</th>
+            <th>Description</th>
+            <th>Photo</th>
+        </tr>
+        <% pets.forEach( pet => { %>
+            <tr>
+                <td style="text-align:center; vertical-align:middle;"><input type="radio" name="pid" value="<%= pet._id.toString() %>"></td>
+                <td><%= pet.name %></td>
+                <td><%= pet.species %></td>
+                <td><%= pet.age %> years old</td>
+                <td><%= pet.weight %> kg</td>
+                <td><%= pet.health %></td>
+                <td><%= pet.status %></td>
+                <td><%= pet.description %></td>
+                <td><img width="300" height="250" src="<%= pet.imageURL %>"></td>
+            </tr>
+        <% }) %>
+    </table>
+    </form>
+</html>

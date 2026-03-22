@@ -1,0 +1,94 @@
+<html>
+<%- include('../../navbar') %>
+    <% if (m) { %>
+        <p style="color:green;">
+            <%= m %>
+        </p>
+        <% } %>
+            <% if (e) { %>
+                <p style="color:red;">
+                    <%= e %>
+                </p>
+                <% } %>
+                    <h1>Update Pet</h1>
+                    <form action="/admin/pet/update/<%= currentPet._id.toString() %>" method="POST">
+                        <table border="1">
+                            <tr>
+                                <td><label>Name</label></td>
+                                <td><input type="text" name="name" value="<%= currentPet.name %>" required></td>
+                            </tr>
+
+                            <tr>
+                                <td><label for="species"><strong>Species</strong></label></td>
+                                <td>
+                                    <select id="species" name="species" required>
+                                        <option value="" disabled>Select species</option>
+                                        <option value="Dog" <% if (currentPet.species==="Dog" ) { %> selected <% } %>
+                                                >Dog</option>
+                                        <option value="Cat" <% if (currentPet.species==="Cat" ) { %> selected <% } %>
+                                                >Cat</option>
+                                        <option value="Rabbit" <% if (currentPet.species==="Rabbit" ) { %> selected <% }
+                                                %>>Rabbit</option>
+                                        <option value="Bird" <% if (currentPet.species==="Bird" ) { %> selected <% } %>
+                                                >Bird</option>
+                                        <option value="Hamster" <% if (currentPet.species==="Hamster" ) { %> selected <%
+                                                } %>>Hamster</option>
+                                        <option value="Other" <% if (currentPet.species==="Other" ) { %> selected <% }
+                                                %>>Other</option>
+                                    </select>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td><label>Age</label></td>
+                                <td><input type="number" name="age" value="<%= currentPet.age %>" required></td>
+                            </tr>
+
+                            <tr>
+                                <td><label>Weight</label></td>
+                                <td><input type="number" name="weight" step="0.1" value="<%= currentPet.weight %>"
+                                        required></td>
+                            </tr>
+
+                            <tr>
+                                <td><label><strong>Health</strong></label></td>
+                                <td>
+                                    <% const healthOptions=[ "Vaccinated" , "Food Sensitivity"
+                                        , "Neutered" , "Healthy" , "Has Health Conditions" ]; %>
+                                        <% healthOptions.forEach(opt=> { %>
+                                            <label>
+                                                <input type="checkbox" name="health" value="<%= opt %>" <% if
+                                                    (currentPet.health && currentPet.health.includes(opt)) { %> checked
+                                                <% } %>
+                                                    >
+                                                    <%= opt %>
+                                            </label><br>
+                                            <% }) %>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td><label>Status</label></td>
+                                <td><input type="text" name="status" value="<%= currentPet.status %>" required></td>
+                            </tr>
+
+                            <tr>
+                                <td><label>Description</label></td>
+                                <td>
+                                    <textarea name="description" rows="4"
+                                        cols="40"><%= currentPet.description || '' %></textarea>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td><label>Image URL</label></td>
+                                <td><input type="text" name="imageURL" value="<%= currentPet.imageURL || '' %>"></td>
+                            </tr>
+                        </table>
+
+                        <br>
+                        <button type="submit">Save Changes</button>
+
+                    </form>
+
+</html>

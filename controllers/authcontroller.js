@@ -1,9 +1,5 @@
-const express = require('express');
 const bcrypt = require('bcrypt');
 const user = require('../models/users');
-const { authenticated } = require('../middleware');
-
-const router = express.Router();
 
 function regeneratesession(req) {
     return new Promise((resolve, reject) => {
@@ -27,15 +23,15 @@ function savesession(req) {
     });
 }
 
-router.get('/register', (req, res) => {
+function registerview(req, res) {
     res.render('register', { m: null, e: null });
-});
+}
 
-router.get('/login', (req, res) => {
+function loginview(req, res) {
     res.render('login', { m: null, e: null });
-});
+}
 
-router.get('/logout', authenticated, (req, res) => {
+function logout(req, res) {
     req.session.destroy((err) => { 
         if (err) {
             console.log('session destroy error >', err);
@@ -44,9 +40,9 @@ router.get('/logout', authenticated, (req, res) => {
         res.clearCookie('sid'); //clear session sid
         return res.redirect('/login');
     });
-});
+}
 
-router.post('/register', async (req, res) => {
+async function register(req, res) {
     try {
         const { name, email, password } = req.body;
 
@@ -55,28 +51,27 @@ router.post('/register', async (req, res) => {
         }
 
         const cemail = email.trim().toLowerCase();
-        const existinguser = await user.findOne({ email: cemail });
+        const existinguser = await user.findonebyemail(cemail);
 
         if (existinguser) {
             return res.render('register', { m: null, e: 'user already exists' });
         }
 
         const hashpassword = await bcrypt.hash(password, 10);
-        const newuser = new user({
+        await user.createaccount({
             name,
             email: cemail,
             password: hashpassword
         });
 
-        await newuser.save();
         return res.render('login', { m: 'registration successful', e: null });
     } catch (error) {
         console.log(error);
         return res.render('register', { m: null, e: 'error registering user' });
     }
-});
+}
 
-router.post('/login', async (req, res) => {
+async function login(req, res) {
     try {
         const { email, password } = req.body;
         if (!email || !password) {
@@ -84,7 +79,7 @@ router.post('/login', async (req, res) => {
         }
 
         const cemail = email.trim().toLowerCase();
-        const existinguser = await user.findOne({ email: cemail });
+        const existinguser = await user.findonebyemail(cemail);
         if (!existinguser) {
             return res.render('login', { m: null, e: 'invalid email or password' });
         }
@@ -96,7 +91,7 @@ router.post('/login', async (req, res) => {
 
         await regeneratesession(req);
         req.session.user = {
-            id: existinguser._id,
+            id: String(existinguser._id),
             email: existinguser.email,
             role: existinguser.role
         };
@@ -110,6 +105,6 @@ router.post('/login', async (req, res) => {
     } catch (error) {
         return res.render('login', { m: null, e: 'error logging in' });
     }
-});
+}
 
-module.exports = router;
+module.exports = {registerview, loginview, logout, register, login};

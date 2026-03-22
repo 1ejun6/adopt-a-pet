@@ -1,5 +1,5 @@
 <%const user = currentuser || null;%>
-<nav aria-label="main" style="display:flex; justify-content:space-between; align-items:center; gap:16px;">
+<nav aria-label="main" style="display:flex; justify-content:space-between; align-items:center; gap:16px; padding:8px 0 16px 0;">
   <div style="display:flex; align-items:center; gap:12px;">
     <% if (!user) { %>
       <a href="/">adopt a pet</a>
@@ -7,11 +7,12 @@
 
     <% if (user && user.role === 'admin') { %>
       <a href="/admin">home</a>
-      <a href="/admin/create">create admin account</a>
+      <a href="/admin/pet">pet listings</a>
     <% } else if (user && user.role === 'customer') { %>
       <a href="/customer">home</a>
       <a href="/customer/read">view account</a>
       <a href="/customer/update">update account</a>
+      <a href="/customer/pet">adopt a pet</a>
     <% } %>
   </div>
 
