@@ -25,7 +25,7 @@
         </tr>
         <% pets.forEach( pet => { %>
             <tr>
-                <td style="text-align:center; vertical-align:middle;"><input type="radio" name="pid" value="<%= pet.pid %>"></td>
+                <td style="text-align:center; vertical-align:middle;"><input type="radio" name="pid" value="<%= pet._id.toString() %>"></td>
                 <td><%= pet.name %></td>
                 <td><%= pet.species %></td>
                 <td><%= pet.age %> years old</td>

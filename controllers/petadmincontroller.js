@@ -15,39 +15,48 @@ exports.displayCreatePet = (req, res) => {
 }
 
 exports.createPet = async (req, res) => {
-    const pid = req.body.pid;
     const name = req.body.name;
     const species = req.body.species;
     const age = req.body.age;
     const weight = req.body.weight;
-    const health = req.body.health;
+    let health = req.body.health;
     const status = req.body.status;
     const description = req.body.description;
     const imageURL = req.body.imageURL;
 
+    if (!health) {
+        health = "No known conditions"
+    }
+ 
+    let healthString = health
+
+    if (Array.isArray(health)) {
+        healthString = health.join(", ")
+    }
+
     const petData = {
-        pid: Number(pid),
         name,
         species,
         age: Number(age),
         weight: Number(weight),
-        health,
+        health: healthString,
         status,
         description,
         imageURL
     };
+    
 
     try {
         await pet.createPet(petData);
         const pets = await pet.getAllPets();
         return res.render("admin/pet/read", { pets, m: "New pet created successfully!", e: null });
     } catch (e) {
-        return res.render("error", { m: null, e: "Error creating pet" })
+        return res.render("error", { m: null, e})
     }
 }
 
 exports.showUpdatePet = async (req, res) => {
-    const pid = Number(req.query.pid);
+    const pid = req.query.pid;
 
     if (!pid) {
         return res.render("error", { e: "Please select a pet!" });
@@ -66,7 +75,7 @@ exports.showUpdatePet = async (req, res) => {
 }
 
 exports.deletePet = async (req, res) => {
-    const pid = Number(req.query.pid);
+    const pid = req.query.pid;
 
     if (!pid) {
         return res.render("error", { e: "Please select a pet!" });
@@ -101,12 +110,22 @@ exports.updatePet = async (req, res) => {
     const species = req.body.species;
     const age = req.body.age;
     const weight = req.body.weight;
-    const health = req.body.health;
+    let health = req.body.health;
     const status = req.body.status;
     const description = req.body.description;
     const imageURL = req.body.imageURL;
 
-    if (!name || !species || !age || !weight || !health || !status) {
+    if (!health) {
+        health = "No known conditions"
+    }
+ 
+    let healthString = health
+
+    if (Array.isArray(health)) {
+        healthString = health.join(", ")
+    }
+
+    if (!name || !species || !age || !weight || !status) {
         const currentPet = await pet.getPetbyPID(pid);
         return res.render("admin/pet/update", { currentPet, m: null, e: "All required fields must be filled in" });
     }
@@ -116,14 +135,14 @@ exports.updatePet = async (req, res) => {
         species,
         age: Number(age),
         weight: Number(weight),
-        health,
+        health: healthString,
         status,
         description,
         imageURL
     };
 
     try {
-        const updatedPet = await pet.updatePet(Number(pid), petData)
+        const updatedPet = await pet.updatePet(pid, petData)
         const pets = await pet.getAllPets();
         return res.render("admin/pet/read", { pets, m: "Pet updated successfully!", e: null });
     } catch (e) {

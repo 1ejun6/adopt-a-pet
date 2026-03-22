@@ -2,11 +2,6 @@ const mongoose = require('mongoose');
 
 const petSchema = new mongoose.Schema(
     {
-        pid : {
-            type : Number,
-            required : true,
-            unique : true,
-        },
         name : {
             type : String,
             required : true,
@@ -54,17 +49,17 @@ exports.getAllPets = () => {
 }
 
 //Update
-exports.updatePet = (pid, petData) => {
-    return Pet.updateOne({pid}, petData);
+exports.updatePet = (_id, petData) => {
+    return Pet.updateOne({_id}, petData);
 }
 
 //Delete
-exports.deletePet = (pid) => {
-    return Pet.deleteOne({ pid });
+exports.deletePet = (_id) => {
+    return Pet.deleteOne({ _id });
 }
 
 //Get Pet by PID
 
-exports.getPetbyPID = (pid) => {
-    return Pet.findOne({ pid });
+exports.getPetbyPID = (_id) => {
+    return Pet.findOne({ _id });
 }
