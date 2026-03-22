@@ -7,7 +7,7 @@
 
     <% if (user && user.role === 'admin') { %>
       <a href="/admin">home</a>
-      <a href="/admin/pet">manage pet listings</a>
+      <a href="/admin/pet">pet listings</a>
     <% } else if (user && user.role === 'customer') { %>
       <a href="/customer">home</a>
       <a href="/customer/read">view account</a>

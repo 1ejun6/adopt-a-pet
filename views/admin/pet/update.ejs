@@ -11,14 +11,8 @@
                 </p>
                 <% } %>
                     <h1>Update Pet</h1>
-                    <form action="/admin/pet/update" method="POST">
+                    <form action="/admin/pet/update/<%= currentPet._id.toString() %>" method="POST">
                         <table border="1">
-                            <tr>
-                                <td><label>Pet ID</label></td>
-                                <td><input type="text" value="<%= currentPet._id.toString() %>" disabled></td>
-                                <input type="hidden" name="pid" value="<%= currentPet._id.toString() %>">
-                            </tr>
-
                             <tr>
                                 <td><label>Name</label></td>
                                 <td><input type="text" name="name" value="<%= currentPet.name %>" required></td>

@@ -13,6 +13,6 @@ router.post("/create", authenticated, admin, petadmincontroller.createPet);
 
 //Update and Delete Pet
 router.get("/action", authenticated, admin, petadmincontroller.handlePetAction);
-router.post("/update", authenticated, admin, petadmincontroller.updatePet);
+router.post("/update/:pid", authenticated, admin, petadmincontroller.updatePet);
 
 module.exports = router;

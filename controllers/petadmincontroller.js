@@ -105,7 +105,7 @@ exports.handlePetAction = async (req, res) => {
 }
 
 exports.updatePet = async (req, res) => {
-    const pid = req.body.pid;
+    const pid = req.params.pid;
     const name = req.body.name;
     const species = req.body.species;
     const age = req.body.age;
