@@ -1,8 +1,10 @@
 const express = require('express');
 const bcrypt = require('bcrypt');
 const user = require('../models/users');
+const appointment = require('../models/appointments')
 const { authenticated, admin } = require('../middleware');
 const { convertarray } = require('./common');
+const { default: mongoose, Mongoose, mongo } = require('mongoose');
 
 const router = express.Router();
 
@@ -127,6 +129,50 @@ router.post('/update/:id', authenticated, admin, async (req, res) => {
     }catch(error){
         return update(req, res, req.params.id, null, 'error updating admin account');
     }
+});
+
+router.get('/confirmAppointments', authenticated, admin, async(req, res) => {
+
+    const allAppointments = await appointment.listAllAppointments();
+    let users_list = []
+
+    for (a of allAppointments) {
+
+            
+        users_to_add = await user.findOne(a.userid);
+        users_list.push({
+            name: users_to_add.name,
+            email: users_to_add.email
+        });
+    }
+
+    return res.render('admin/confirmAppointments', {m: null, e: null, allAppointments, users_list});
+});
+
+router.post('/confirmAppointments', authenticated, admin, async(req, res) => {
+
+    const confirmedAppointments = req.body.appointmentIds;
+    let confirmedAppointmentList = []
+
+    if (confirmedAppointments) {
+        if (!Array.isArray(confirmedAppointments)) {
+            confirmedAppointmentList = [confirmedAppointments];
+        } else {
+            confirmedAppointmentList = confirmedAppointments;
+        }
+        for (b of confirmedAppointmentList) {
+            await appointment.confirmAppointment(b, "Appointment Confirmed!");
+        }
+    }
+
+    const allAppointments = await appointment.listAllAppointments();
+    let users_list = []
+
+    for (a of allAppointments) {
+        users_list.push(await user.findOne(a.userid));
+    }
+
+    return res.render('admin/confirmAppointments', {m: null, e: null, allAppointments, users_list});
 });
 
 module.exports = router;

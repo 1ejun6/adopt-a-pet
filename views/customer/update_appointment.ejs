@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update Appointment</title>
+</head>
+
+<body>
+    <h3>Update Appointment</h3>
+    <% if (appointment_details) { %>
+        <form action="/customer/appointment/update" method="POST">
+            <input type="hidden" name="appointmentId" value="<%= appointment_details._id %>">
+            Appointment Date: <input type="date" name="appointmentDate" value="<%=new Date(appointment_details.appointmentdate).toISOString().split('T')[0]%>" required><br>
+            Time Slot: <select required name="timeslot">
+                <option value="1100">1100</option>
+                <option value="1300">1300</option>
+                <option value="1400">1400</option>
+                <option value="1500">1500</option>
+                <option value="1600">1600</option>
+                <option value="1700">1700</option>
+            </select> <br>
+            Location: 
+            <select required name="location">
+                <option value="Suntec">Suntec</option>
+                <option value="Tampines">Tampines</option>
+                <option value="Jurong East">Jurong East</option>
+            </select> <br>
+            Pet Species:
+            <select required name="petspecies">
+                <% for (species of pet_species_list) {%>
+                    <option value="<%=species%>"><%=species%></option>
+                <% } %>
+            </select>
+            <br>
+            <button type="submit">Update Booking</button>
+        </form>
+    <% } %>
+</body>
+
+</html>
