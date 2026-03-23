@@ -1,0 +1,95 @@
+<html>
+<%- include('../../navbar') %>
+  <% if (m) { %>
+    <p style="color:green;">
+      <%= m %>
+    </p>
+    <% } %>
+      <% if (e) { %>
+        <p style="color:red;">
+          <%= e %>
+        </p>
+        <% } %>
+          <h1>Create a pet!</h1>
+
+          <form action="/admin/pet/create" method="POST">
+            <table>
+              <tr>
+                <td><label for="name"><strong>Name</strong></label></td>
+                <td><input type="text" id="name" name="name" required></td>
+              </tr>
+              <tr>
+                <td><label for="species"><strong>Species</strong></label></td>
+                <td>
+                  <select id="species" name="species" required>
+                    <option value="" disabled selected>Select species</option>
+                    <option value="Dog">Dog</option>
+                    <option value="Cat">Cat</option>
+                    <option value="Rabbit">Rabbit</option>
+                    <option value="Bird">Bird</option>
+                    <option value="Hamster">Hamster</option>
+                    <option value="Other">Other</option>
+                  </select>
+                </td>
+              </tr>
+              <tr>
+                <td><label for="age"><strong>Age (in Years)</strong></label></td>
+                <td><input type="number" id="age" name="age" step="1" required></td>
+              </tr>
+              <tr>
+                <td><label for="weight"><strong>Weight (KG)</strong></label></td>
+                <td><input type="number" id="weight" name="weight" step="0.01" required></td>
+              </tr>
+              <tr>
+                <td><label><strong>Health</strong></label></td>
+                <td>
+                  <label>
+                    <input type="checkbox" name="health" value="Vaccinated">
+                    Vaccinated
+                  </label><br>
+
+                  <label>
+                    <input type="checkbox" name="health" value="Food Sensitivity">
+                    Food Sensitivity
+                  </label><br>
+
+                  <label>
+                    <input type="checkbox" name="health" value="Neutered">
+                    Neutered
+                  </label><br>
+
+                  <label>
+                    <input type="checkbox" name="health" value="Healthy">
+                    Healthy
+                  </label><br>
+
+                  <label>
+                    <input type="checkbox" name="health" value="Has Health Conditions">
+                    Has Health Conditions
+                  </label>
+                </td>
+              </tr>
+              <tr>
+                <td><label for="status"><strong>Status</strong></label></td>
+                <td>
+                  <select id="status" name="status" required>
+                    <option value="">Select status</option>
+                    <option value="Available">Available</option>
+                    <option value="Onboarding">Onboarding</option>
+                  </select>
+                </td>
+              </tr>
+              <tr>
+                <td><label for="description"><strong>Description</strong></label></td>
+                <td><textarea id="description" name="description" rows="4" cols="40" required></textarea></td>
+              </tr>
+              <tr>
+                <td><label for="imageURL"><strong>Image URL</strong></label></td>
+                <td><input type="text" id="imageURL" name="imageURL" required></td>
+              </tr>
+            </table>
+            <br>
+            <button type="submit">Create Pet</button>
+          </form>
+
+</html>

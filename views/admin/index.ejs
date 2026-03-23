@@ -15,12 +15,20 @@
       <% deleted.map(e => { %><li><%= e %></li><% }) %>
     </ol>
   <% } %>
+  <h1>Manage Admins</h1>
   <% if (accounts && accounts.length > 0) { %>
     <form method="post">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+        <div>
+          <button type="submit" id="updatebutton" formmethod="get" formaction="/admin/update" disabled>update</button>
+          <button type="submit" id="deletebutton" formaction="/admin/delete" disabled>delete</button>
+        </div>
+        <button type="submit" formmethod="get" formaction="/admin/create">create</button>
+      </div>
       <table border="1">
         <thead>
           <tr>
-            <th>select</th>
+            <th style="width:30px; text-align:center; vertical-align:middle;"></th>
             <th>name</th>
             <th>email</th>
             <th>created date</th>
@@ -29,7 +37,7 @@
         <tbody>
           <% accounts.map(a => { %>
             <tr>
-              <td><input type="checkbox" name="selectedid[]" value="<%= a._id %>"></td>
+              <td style="text-align:center; vertical-align:middle;"><input type="checkbox" name="selectedid[]" value="<%= a._id %>"></td>
               <td><%= a.name %></td>
               <td><%= a.email %></td>
               <td><%= (a.cdate).toLocaleString() %></td>
@@ -37,10 +45,13 @@
           <% }) %>
         </tbody>
       </table>
-      <button type="submit" id="updatebutton" formaction="/admin/update" disabled>update</button>
-      <button type="submit" id="deletebutton" formaction="/admin/delete" disabled>delete</button>
     </form>
   <% } else { %>
+    <div style="display:flex; justify-content:flex-end; margin-bottom:8px;">
+      <form method="get" action="/admin/create" style="margin:0;">
+        <button type="submit">create</button>
+      </form>
+    </div>
     <p>no admin accounts found</p>
   <% } %>
   <script>
@@ -49,8 +60,14 @@
     document.querySelectorAll('input[name="selectedid[]"]').forEach(c => {
       c.onchange = () => { //run function every time checkbox changes
         const count = document.querySelectorAll('input[name="selectedid[]"]:checked').length;
+        //finds all checked inputs with name selectedid[]
+        //returns a list of <input type="checkbox"> objects
+        //converts the nodelist into a normal array
+        const ids = Array.from(document.querySelectorAll('input[name="selectedid[]"]:checked')).map(c => c.value);
         ubutton.disabled = count !== 1;
         dbutton.disabled = count === 0;
+        ubutton.formAction = count === 1 ? `/admin/update/${ids[0]}` : '/admin/update';
+        dbutton.formAction = ids.length ? `/admin/delete/${ids.join('-')}` : '/admin/delete';
       }
     });
     </script>
