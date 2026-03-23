@@ -7,6 +7,9 @@
     <%- include('../../navbar') %>
 
     <h1>Manage Adoption Drives</h1>
+    <% if (e){ %>
+        <p><%= e %></p>
+    <% } %>
 
     <form action="/admin/adoption-drives/create" method="GET">
         <button type="submit">create drive</button>

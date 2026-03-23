@@ -7,6 +7,9 @@
     <%- include('../../navbar') %>
 
     <h1>Edit Adoption Drive</h1>
+    <% if (e){ %>
+        <p><%= e %></p>
+    <% } %>
 
     <form action="/admin/adoption-drives/<%= drive._id %>/edit" method="post">
         <p>Title:</p>

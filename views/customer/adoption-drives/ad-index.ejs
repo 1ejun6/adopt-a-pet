@@ -10,6 +10,10 @@
 
   <h1>Upcoming Adoption Drives</h1>
 
+  <% if (e){ %>
+    <p><%= e %></p>
+  <% } %>
+
   <% if (msg) { %>
     <p class="msg <%= (msg === 'success') ? 'success' : 'error' %>">
       <% if (msg === 'success') { %>

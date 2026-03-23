@@ -4,13 +4,13 @@ const getadminalldrives = async (req, res) => {
     try {
         const drives = await adoptionDriveModel.getalldrives();
 
-        return res.render('admin/adoption-drives/manage-drive', {
+        return res.render('admin/adoption-drives/manage', {
             drives,
             e: null
         });
     } catch (error) {
         console.log(error);
-        return res.render('admin/adoption-drives/manage-drive', {
+        return res.render('admin/adoption-drives/manage', {
             drives: [],
             e: 'error loading drives'
         });
@@ -18,7 +18,7 @@ const getadminalldrives = async (req, res) => {
 };
 
 const getadmincreateform = (req, res) => {
-    return res.render('admin/adoption-drives/create-drive', { e: null });
+    return res.render('admin/adoption-drives/create', { e: null });
 };
 
 const createadmindrive = async (req, res) => {
@@ -39,7 +39,7 @@ const createadmindrive = async (req, res) => {
         return res.redirect('/admin/adoption-drives');
     } catch (error) {
         console.log(error);
-        return res.render('admin/adoption-drives/create-drive', {
+        return res.render('admin/adoption-drives/create', {
             e: 'error creating drive'
         });
     }
@@ -53,7 +53,7 @@ const getadmineditform = async (req, res) => {
             return res.render('error', { e: 'drive not found' });
         }
 
-        return res.render('admin/adoption-drives/edit-drive', {
+        return res.render('admin/adoption-drives/edit', {
             drive,
             e: null
         });
