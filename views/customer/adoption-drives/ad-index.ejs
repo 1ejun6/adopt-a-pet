@@ -26,8 +26,8 @@
     </p>
   <% } %>
   
-
-  <table border="1" cellpadding="10" cellspacing="0">
+  <form action="/adoption-drives/rsvp-multiple" method="POST">
+    <table border="1" cellpadding="10" cellspacing="0">
     <thead>
       <tr>
         <th>Title</th>
@@ -48,31 +48,30 @@
           <td><%= drive.attendees.length %> / <%= drive.mcapacity %></td>
           <td>
             <% if (drive.status === 'open') { %>
+              
               <% if (drive.attendees.some(attendee => attendee.toString() === currentuser.id.toString())) { %>
-                <form action="/adoption-drives/<%= drive._id %>/unrsvp" method="post">
-                  <button type="submit">Un-RSVP</button>
-                </form>
+                Already RSVPed
               <% } else { %>
-                <form action="/adoption-drives/<%= drive._id %>/rsvp" method="post">
-                  <button type="submit">RSVP</button>
-                </form>
+                <input type="checkbox" name="driveIds" value="<%= drive._id %>">
               <% } %>
+
             <% } else if (drive.status === 'closed') { %>
-              <% if (drive.attendees.some(attendee => attendee.toString() === currentuser.id.toString())) { %>
-                <form action="/adoption-drives/<%= drive._id %>/unrsvp" method="post">
-                  <button type="submit">Un-RSVP</button>
-                </form>
-              <% } else { %>
-                Closed
-              <% } %>
+              Closed
+
             <% } else if (drive.status === 'cancelled') { %>
               Cancelled
+
             <% } %>
           </td>
         </tr>
       <% }) %>
     </tbody>
   </table>
+  <br>
+  <div style="text-align: left;">
+    <button type="submit">RSVP</button>
+  </div>
+  </form>
 
 </body>
 </html>

@@ -4,63 +4,68 @@ const {authenticated} = require("../middleware");
 
 const router = express.Router();
 
-router.post("/adoption-drives/:id/rsvp", authenticated , async (req, res) => {
+router.post('/adoption-drives/rsvp-multiple', authenticated, async (req, res) => {
     try {
-        const driveId = req.params.id;
         const userId = req.session.user.id;
+        let { driveIds } = req.body;
 
-        const drive = await AdoptionDrive.findById(driveId);
-
-        if (!drive) {
-            return res.redirect('/customer/adoption-drives?msg=notfound');
+        // nothing selected
+        if (!driveIds) {
+            return res.redirect('/customer/adoption-drives?msg=empty');
         }
 
-        if (drive.status === 'cancelled') {
-            return res.redirect('/customer/adoption-drives?msg=cancelled');
+        // ensure it's always an array
+        if (!Array.isArray(driveIds)) {
+            driveIds = [driveIds];
         }
 
-        if (drive.status === 'closed') {
-            return res.redirect('/customer/adoption-drives?msg=closed');
+        let success = false;
+        let already = false;
+        let closed = false;
+        let cancelled = false;
+
+        for (const id of driveIds) {
+            const drive = await AdoptionDrive.getdrivebyid(id);
+            if (!drive) continue;
+
+            // status checks
+            if (drive.status === 'cancelled') {
+                cancelled = true;
+                continue;
+            }
+
+            if (drive.status === 'closed') {
+                closed = true;
+                continue;
+            }
+
+            // already RSVPed
+            if (drive.attendees.some(att => att.toString() === userId.toString())) {
+                already = true;
+                continue;
+            }
+
+            // RSVP
+            drive.attendees.push(userId);
+            success = true;
+
+            if (drive.attendees.length >= drive.mcapacity) {
+                drive.status = 'closed';
+            }
+
+            await drive.save();
         }
 
-        drive.attendees.push(userId);
+        // decide message priority
+        if (success) return res.redirect('/customer/adoption-drives?msg=success');
+        if (already) return res.redirect('/customer/adoption-drives?msg=already');
+        if (closed) return res.redirect('/customer/adoption-drives?msg=closed');
+        if (cancelled) return res.redirect('/customer/adoption-drives?msg=cancelled');
 
-        if (drive.attendees.length >= drive.mcapacity) {
-            drive.status = 'closed';
-        }
-
-        await drive.save();
-        return res.redirect('/customer/adoption-drives?msg=success');
-
-    } catch (err) {
-        console.log('RSVP error:', err);
         return res.redirect('/customer/adoption-drives?msg=error');
-    }
-})
 
-router.post('/adoption-drives/:id/unrsvp', authenticated, async (req, res) => {
-    try {
-        const driveId = req.params.id;
-        const userId = req.session.user.id;
-
-        const drive = await AdoptionDrive.findById(driveId);
-
-        if (!drive) {
-            return res.redirect('/customer/adoption-drives?msg=notfound');
-        }
-
-        drive.attendees = drive.attendees.filter(
-            attendee => attendee.toString() !== userId.toString()
-        );
-
-        if (drive.status === 'closed' && drive.attendees.length < drive.mcapacity) {
-            drive.status = 'open';
-        }
-
-        await drive.save();
-        return res.redirect('/customer/adoption-drives?msg=unrsvp');
     } catch (err) {
-        console.log('Un-RSVP error:', err);
+        console.log('multiple rsvp error:', err);
         return res.redirect('/customer/adoption-drives?msg=error');
     }
 });

@@ -3,12 +3,20 @@
 <head>
     <title>Manage Drive</title>
 </head>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Manage Drive</title>
+</head>
 <body>
-    <%- include('../../navbar') %>
-
     <h1>Manage Adoption Drives</h1>
 
-    <a href="/admin/adoption-drives/create">create new drive</a>
+    <a href="/admin">Back to Admin Home</a>
+    <br><br>
+
+    <form action="/admin/adoption-drives/create" method="GET">
+        <button type="submit">create drive</button>
+    </form>
 
     <% if (e) { %>
         <p><%= e %></p>
@@ -17,22 +25,67 @@
     <% if (!drives || drives.length === 0) { %>
         <p>No adoption drives found.</p>
     <% } else { %>
-        <% drives.forEach(drive => { %>
-            <div style="border:1px solid black; padding:10px; margin-top:10px;">
-                <p><strong>Title:</strong> <%= drive.title %></p>
-                <p><strong>Location:</strong> <%= drive.location %></p>
-                <p><strong>Date:</strong> <%= new Date(drive.eventdate).toDateString() %></p>
-                <p><strong>Description:</strong> <%= drive.description || '' %></p>
-                <p><strong>Capacity:</strong> <%= drive.attendees.length %> / <%= drive.mcapacity %></p>
-                <p><strong>Status:</strong> <%= drive.status %></p>
+        <table border="1" cellpadding="10" cellspacing="0">
+            <thead>
+                <tr>
+                    <th>Select</th>
+                    <th>Title</th>
+                    <th>Location</th>
+                    <th>Date</th>
+                    <th>Description</th>
+                    <th>Capacity</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% drives.forEach(drive => { %>
+                    <tr>
+                        <td>
+                            <input
+                                type="radio"
+                                name="selectedDrive"
+                                value="<%= drive._id %>"
+                                onchange="selectDrive('<%= drive._id %>')"
+                            >
+                        </td>
+                        <td><%= drive.title %></td>
+                        <td><%= drive.location %></td>
+                        <td><%= new Date(drive.eventdate).toDateString() %></td>
+                        <td><%= drive.description || '' %></td>
+                        <td><%= drive.attendees.length %> / <%= drive.mcapacity %></td>
+                        <td><%= drive.status %></td>
+                    </tr>
+                <% }) %>
+            </tbody>
+        </table>
 
-                <a href="/admin/adoption-drives/<%= drive._id %>/edit">edit</a>
+        <br>
 
-                <form action="/admin/adoption-drives/<%= drive._id %>/delete" method="post" style="display:inline;">
-                    <button type="submit">delete</button>
-                </form>
-            </div>
-        <% }) %>
+        <div style="display:flex; gap:10px; align-items:center;">
+            <a id="editLink" href="#">
+                <button id="editButton" type="button" disabled>Edit</button>
+            </a>
+
+            <form id="deleteForm" action="#" method="POST">
+                <button id="deleteButton" type="submit" disabled>Delete</button>
+            </form>
+        </div>
     <% } %>
+
+    <script>
+        function selectDrive(driveId) {
+            const editLink = document.getElementById('editLink');
+            const editButton = document.getElementById('editButton');
+            const deleteForm = document.getElementById('deleteForm');
+            const deleteButton = document.getElementById('deleteButton');
+
+            editLink.href = '/admin/adoption-drives/' + driveId + '/edit';
+            deleteForm.action = '/admin/adoption-drives/' + driveId + '/delete';
+
+            editButton.disabled = false;
+            deleteButton.disabled = false;
+        }
+    </script>
 </body>
+</html>
 </html>

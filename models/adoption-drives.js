@@ -75,7 +75,7 @@ exports.createdrive = (driveData) => {
 
 //Read by ID
 exports.getdrivebyid = (_id) => {
-    return AdoptionDrive.findById(_id).lean();
+    return AdoptionDrive.findById(_id);
 }
 
 //Update
