@@ -4,13 +4,13 @@ const getadminalldrives = async (req, res) => {
     try {
         const drives = await adoptionDriveModel.getalldrives();
 
-        return res.render('admin/adoption-drives/manage', {
+        return res.render('admin/adoption-drives/index', {
             drives,
             e: null
         });
     } catch (error) {
         console.log(error);
-        return res.render('admin/adoption-drives/manage', {
+        return res.render('admin/adoption-drives/index', {
             drives: [],
             e: 'error loading drives'
         });

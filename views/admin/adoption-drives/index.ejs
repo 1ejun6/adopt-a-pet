@@ -11,15 +11,24 @@
         <p><%= e %></p>
     <% } %>
 
-    <form action="/admin/adoption-drives/create" method="GET">
-        <button type="submit">create drive</button>
-    </form>
-    <br>
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+        <div style="display:flex; gap:10px; align-items:center;">
+            <a id="editLink" href="#">
+                <button id="editButton" type="button" name="action" value="update" disabled>Update</button>
+            </a>
+            <form id="deleteForm" action="#" method="POST" style="margin:0;">
+                <button id="deleteButton" type="submit" name="action" value="delete" disabled>Delete</button>
+            </form>
+        </div>
+        <form action="/admin/adoption-drives/create" method="GET">
+            <button type="submit">Create</button>
+        </form>
+    </div>
 
     <% if (!drives || drives.length === 0) { %>
         <p>No adoption drives found.</p>
     <% } else { %>
-        <table border="1" cellpadding="10" cellspacing="0">
+        <table border="1">
             <thead>
                 <tr>
                     <th>Select</th>
@@ -52,18 +61,6 @@
                 <% }) %>
             </tbody>
         </table>
-
-        <br>
-
-        <div style="display:flex; gap:10px; align-items:center;">
-            <a id="editLink" href="#">
-                <button id="editButton" type="button" disabled>Edit</button>
-            </a>
-
-            <form id="deleteForm" action="#" method="POST">
-                <button id="deleteButton" type="submit" disabled>Delete</button>
-            </form>
-        </div>
     <% } %>
 
     <script>
@@ -81,5 +78,4 @@
         }
     </script>
 </body>
-</html>
 </html>
