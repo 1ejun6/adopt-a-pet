@@ -6,10 +6,10 @@ const session = require('express-session');
 const authcontroller = require('./controllers/authcontroller');
 const admincontroller = require('./controllers/admincontroller');
 const customercontroller = require('./controllers/customercontroller');
-const guestadoptdrivecontroller = require('./controllers/guestadoptdrivecontroller');
 const rsvpcontroller = require('./controllers/rsvpcontroller');
-const adminAdoptDriveController = require('./controllers/adminadoptdrivecontroller');
-const customeradoptdrivecontroller = require('./controllers/customeradoptdrivecontroller');
+const adminadoptdriveroutes = require('./routes/adminadoptdrive');
+const customeradoptdriveroutes = require('./routes/customeradoptdrive');
+const guestadoptdriveroutes = require('./routes/guestadoptdrive');
 
 dotenv.config({ path: './.env' });
 
@@ -32,10 +32,11 @@ server.use((req, res, next) => { //on every request
 server.use('/admin', admincontroller);
 server.use('/customer', customercontroller);
 server.use('/', authcontroller);
-server.use('/', guestadoptdrivecontroller);
 server.use('/', rsvpcontroller);
-server.use('/admin', adminAdoptDriveController);
-server.use('/customer', customeradoptdrivecontroller);
+
+server.use('/admin/adoption-drives', adminadoptdriveroutes);
+server.use('/customer/adoption-drives', customeradoptdriveroutes);
+server.use('/adoption-drives', guestadoptdriveroutes);
 
 async function connectdb() {
     try {
@@ -49,6 +50,6 @@ async function connectdb() {
 
 function startserver() {
     const port = process.env.port;
-    server.listen(port, () => {console.log(`server running at http://localhost:${port}/`);});
+    server.listen(port, () => { console.log(`server running at http://localhost:${port}/`); });
 }
 connectdb().then(startserver);

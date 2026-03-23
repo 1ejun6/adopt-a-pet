@@ -1,18 +1,8 @@
-const express = require('express');
-const AdoptionDrive = require('../models/adoption-drives');
-const { authenticated, admin } = require('../middleware');
+const adoptionDriveModel = require('../models/adoption-drives');
 
-const router = express.Router();
-
-router.use(authenticated);
-router.use(admin);
-
-// show all drives
-router.get('/adoption-drives', async (req, res) => {
+const getadminalldrives = async (req, res) => {
     try {
-        const drives = await AdoptionDrive.find({})
-            .sort({ eventdate: 1 })
-            .lean();
+        const drives = await adoptionDriveModel.getalldrives();
 
         return res.render('admin/adoption-drives/manage-drive', {
             drives,
@@ -25,19 +15,17 @@ router.get('/adoption-drives', async (req, res) => {
             e: 'error loading drives'
         });
     }
-});
+};
 
-// show create form
-router.get('/adoption-drives/create', (req, res) => {
+const getadmincreateform = (req, res) => {
     return res.render('admin/adoption-drives/create-drive', { e: null });
-});
+};
 
-// create drive
-router.post('/adoption-drives/create', async (req, res) => {
+const createadmindrive = async (req, res) => {
     try {
         const { title, location, eventdate, description, mcapacity } = req.body;
 
-        await AdoptionDrive.create({
+        await adoptionDriveModel.createdrive({
             title,
             location,
             eventdate,
@@ -55,12 +43,11 @@ router.post('/adoption-drives/create', async (req, res) => {
             e: 'error creating drive'
         });
     }
-});
+};
 
-// show edit form
-router.get('/adoption-drives/:id/edit', async (req, res) => {
+const getadmineditform = async (req, res) => {
     try {
-        const drive = await AdoptionDrive.findById(req.params.id).lean();
+        const drive = await adoptionDriveModel.getdrivebyid(req.params.id);
 
         if (!drive) {
             return res.render('error', { e: 'drive not found' });
@@ -74,14 +61,13 @@ router.get('/adoption-drives/:id/edit', async (req, res) => {
         console.log(error);
         return res.render('error', { e: 'error loading drive' });
     }
-});
+};
 
-// update drive
-router.post('/adoption-drives/:id/edit', async (req, res) => {
+const updateadmindrive = async (req, res) => {
     try {
         const { title, location, eventdate, description, mcapacity, status } = req.body;
 
-        const drive = await AdoptionDrive.findByIdAndUpdate(
+        const drive = await adoptionDriveModel.updatedrive(
             req.params.id,
             {
                 title,
@@ -90,8 +76,7 @@ router.post('/adoption-drives/:id/edit', async (req, res) => {
                 description,
                 mcapacity,
                 status
-            },
-            { new: true, runValidators: true }
+            }
         );
 
         if (!drive) {
@@ -103,12 +88,11 @@ router.post('/adoption-drives/:id/edit', async (req, res) => {
         console.log(error);
         return res.render('error', { e: 'error updating drive' });
     }
-});
+};
 
-// delete drive
-router.post('/adoption-drives/:id/delete', async (req, res) => {
+const deleteadmindrive = async (req, res) => {
     try {
-        const drive = await AdoptionDrive.findByIdAndDelete(req.params.id);
+        const drive = await adoptionDriveModel.deletedrive(req.params.id);
 
         if (!drive) {
             return res.render('error', { e: 'drive not found' });
@@ -119,6 +103,6 @@ router.post('/adoption-drives/:id/delete', async (req, res) => {
         console.log(error);
         return res.render('error', { e: 'error deleting drive' });
     }
-});
+};
 
-module.exports = router;
+module.exports = { getadminalldrives, getadmincreateform, createadmindrive, getadmineditform, updateadmindrive, deleteadmindrive };

@@ -1,14 +1,8 @@
-const express = require('express');
-const AdoptionDrive = require('../models/adoption-drives');
-const { authenticated, customer } = require('../middleware');
+const adoptionDriveModel = require('../models/adoption-drives');
 
-const router = express.Router();
-
-router.get('/adoption-drives', authenticated, customer, async (req, res) => {
+const getcustomeralldrives = async (req, res) => {
     try {
-        const drives = await AdoptionDrive.find({})
-            .sort({ eventdate: 1 })
-            .lean();
+        const drives = await adoptionDriveModel.getalldrives();
 
         return res.render('customer/adoption-drives/ad-index', {
             drives,
@@ -18,6 +12,6 @@ router.get('/adoption-drives', authenticated, customer, async (req, res) => {
         console.log(error);
         return res.render('error', { e: 'error loading adoption drives' });
     }
-});
+};
 
-module.exports = router;
+module.exports = { getcustomeralldrives };

@@ -29,17 +29,17 @@ const adoptiondriveschema = new mongoose.Schema({
     },
 
     attendees: {
-    type: [
-        {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'users'
-        }
-    ],
-    default: []
+        type: [
+            {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: 'users'
+            }
+        ],
+        default: []
     },
 
     cby: {
-        type: mongoose.Schema.Types.ObjectId, 
+        type: mongoose.Schema.Types.ObjectId,
         ref: 'users',
         required: [true, 'admin user is required']
     },
@@ -57,4 +57,37 @@ const adoptiondriveschema = new mongoose.Schema({
     }
 });
 
-module.exports = mongoose.model('AdoptionDrive', adoptiondriveschema);
+const AdoptionDrive = mongoose.model('AdoptionDrive', adoptiondriveschema);
+
+//Read
+exports.getalldrives = () => {
+    return AdoptionDrive.find({}).sort({ eventdate: 1 }).lean();
+}
+
+exports.getalldrivesdescending = () => {
+    return AdoptionDrive.find({}).sort({ eventdate: -1 }).lean();
+}
+
+//Create
+exports.createdrive = (driveData) => {
+    return AdoptionDrive.create(driveData);
+}
+
+//Read by ID
+exports.getdrivebyid = (_id) => {
+    return AdoptionDrive.findById(_id).lean();
+}
+
+//Update
+exports.updatedrive = (_id, driveData) => {
+    return AdoptionDrive.findByIdAndUpdate(
+        _id,
+        driveData,
+        { returnDocument: 'after', runValidators: true }
+    );
+}
+
+//Delete
+exports.deletedrive = (_id) => {
+    return AdoptionDrive.findByIdAndDelete(_id);
+}
