@@ -8,10 +8,6 @@
 
     <h1>Create Adoption Drive</h1>
 
-    <% if (e) { %>
-        <p><%= e %></p>
-    <% } %>
-
     <form action="/admin/adoption-drives/create" method="post">
         <p>Title:</p>
         <input type="text" name="title" required>

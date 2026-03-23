@@ -3,25 +3,15 @@
 <head>
     <title>Manage Drive</title>
 </head>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <title>Manage Drive</title>
-</head>
 <body>
-    <h1>Manage Adoption Drives</h1>
+    <%- include('../../navbar') %>
 
-    <a href="/admin">Back to Admin Home</a>
-    <br><br>
+    <h1>Manage Adoption Drives</h1>
 
     <form action="/admin/adoption-drives/create" method="GET">
         <button type="submit">create drive</button>
     </form>
     <br>
-
-    <% if (e) { %>
-        <p><%= e %></p>
-    <% } %>
 
     <% if (!drives || drives.length === 0) { %>
         <p>No adoption drives found.</p>
