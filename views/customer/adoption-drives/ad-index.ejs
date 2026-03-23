@@ -68,9 +68,24 @@
     </tbody>
   </table>
   <br>
-  <div style="text-align: left;">
-    <button type="submit">RSVP</button>
+  <div style="text-align:left;">
+    <button id="rsvpButton" type="submit" style="display:none;">
+      RSVP
+    </button>
   </div>
+  <script>
+    const checkboxes = document.querySelectorAll('input[name="driveIds"]');
+    const rsvpButton = document.getElementById('rsvpButton');
+
+    function toggleButton() {
+      const anyChecked = Array.from(checkboxes).some(cb => cb.checked);
+      rsvpButton.style.display = anyChecked ? 'inline-block' : 'none';
+    }
+
+    checkboxes.forEach(cb => {
+      cb.addEventListener('change', toggleButton);
+    });
+  </script>
   </form>
 
 </body>
