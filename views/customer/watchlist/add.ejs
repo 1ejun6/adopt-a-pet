@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>home</title>
+</head>
+
+<body>
+  <!-- This view is protected by authenticated middleware, ensuring a user exists -->
+  <%- include('../../navbar') %>
+    <% if (currentuser?.role=='admin' ) { %>
+      <h3>Watchlist is only available for customers! Return to <a href="/admin">index</a>!</h3>
+      <% } else if (currentuser?.role=='customer' ) { %>
+        <form method="post" action="/customer/watchlist/add">
+          <table border="1">
+            <tr>
+              <th colspan="2">
+                <h4>
+                  <%= currentuser.name %>'s Watchlist Editor
+                </h4>
+              </th>
+              <th>Select</th>
+              <th>Your Comments</th>
+            </tr>
+            <% if (currentPets.length===0) { %>
+              <tr>
+                <td>Oh man... it seems that no pets are available at the moment! Check back <a
+                    href="/customer">again</a> soon!</td>
+              </tr>
+              <% } else { %>
+                <% currentPets.forEach(pet=> { %>
+                  <tr>
+                    <th colspan="4">
+                      <%= pet.name %> (<%= pet.species %>, age <%= pet.age %>)
+                    </th>
+                  </tr>
+                  <tr>
+                    <td><img src=<%=pet.imageURL %> width=100></td>
+                    <td><strong>Weight:</strong>
+                      <%= pet.weight %> kg<br> <strong>Description:</strong>
+                        <%= pet.description %><br> <strong>Health Status:</strong>
+                          <%= pet.health %>
+                    </td>
+                    <td>
+                      <input type="checkbox" name="selected" value="<%= pet._id %>">
+                    </td>
+                    <td><textarea name="<%= pet._id %>" rows="4" cols="20"></textarea></td>
+                  </tr>
+                  <% }) %>
+                    <% } %>
+                      <tr>
+                        <th colspan="4">
+                          <br>
+                          Confirm your edits! <button type="submit">Click here!</button>
+                          <br>
+                        </th>
+                      </tr>
+          </table>
+        </form>
+        <% } else { %>
+          <!-- This should never run -->
+          <h1>Get away you <a href="/">unauthorized thing!</a></h1>
+          <% } %>
+</body>
+
+</html>

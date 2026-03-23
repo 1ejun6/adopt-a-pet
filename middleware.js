@@ -32,4 +32,18 @@ function customer(req, res, next) {
     return res.status(403).render('error', { e: 'access denied' });
 }
 
-module.exports = { authenticated, admin, customer };
+function custOnly(req, res, next) {
+    const currentUserRole = req.session?.user?.role;
+    if (!currentUserRole) {
+        return res.redirect('/login');
+    }
+    else if (currentUserRole === 'admin') {
+        return res.redirect('/admin');
+    } else if (currentUserRole === 'customer') {
+        return next();
+    };
+
+    return res.status(403).render('error', { e: 'access denied' });
+};
+
+module.exports = { authenticated, admin, customer, custOnly };

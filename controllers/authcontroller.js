@@ -93,7 +93,8 @@ async function login(req, res) {
         req.session.user = {
             id: String(existinguser._id),
             email: existinguser.email,
-            role: existinguser.role
+            role: existinguser.role,
+            name: existinguser.name
         };
         await savesession(req);
 

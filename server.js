@@ -8,6 +8,7 @@ const adminroutes = require('./routes/admin');
 const customerroutes = require('./routes/customer');
 const petadminroutes = require('./routes/petadmin');
 const petcustomerroutes = require('./routes/petcustomer');
+const petWatchlistRoutes = require('./routes/watchlist');
 
 dotenv.config({ path: './.env' });
 
@@ -32,6 +33,7 @@ server.use('/customer', customerroutes);
 server.use('/', authroutes);
 server.use('/admin/pet', petadminroutes);
 server.use('/customer/pet', petcustomerroutes);
+server.use('/customer/watchlist', petWatchlistRoutes);
 
 async function connectdb() {
     try {
