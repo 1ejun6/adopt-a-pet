@@ -1,0 +1,96 @@
+<!--index page for customers to view upcoming drives-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Customer Adoption Drives</title>
+</head>
+
+<body>
+  <%- include('../../navbar') %>
+
+  <h1>Upcoming Adoption Drives</h1>
+
+  <% if (e){ %>
+    <p><%= e %></p>
+  <% } %>
+
+  <% if (msg) { %>
+    <p class="msg <%= (msg === 'success') ? 'success' : 'error' %>">
+      <% if (msg === 'success') { %>
+        RSVP successful!
+      <% } else if (msg === 'unrsvp') { %>
+        You have successfully cancelled your RSVP.
+      <% } else if (msg === 'cancelled') { %>
+        Sorry, this adoption drive has been cancelled.
+      <% } else if (msg === 'closed') { %>
+        RSVP closed — this drive is full.
+      <% } else { %>
+        Could not RSVP. Please try again.
+      <% } %>
+    </p>
+  <% } %>
+  
+  <form action="/adoption-drives/rsvp-multiple" method="POST">
+    <table border="1">
+    <thead>
+      <tr>
+        <th>Title</th>
+        <th>Location</th>
+        <th>Date</th>
+        <th>Description</th>
+        <th>Capacity</th>
+        <th>RSVP</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% drives.forEach(drive => { %>
+        <tr>
+          <td><%= drive.title %></td>
+          <td><%= drive.location %></td>
+          <td><%= drive.eventdate.toDateString() %></td>
+          <td><%= drive.description %></td>
+          <td><%= drive.attendees.length %> / <%= drive.mcapacity %></td>
+          <td>
+            <% if (drive.status === 'open') { %>
+              
+              <% if (drive.attendees.some(attendee => attendee.toString() === currentuser.id.toString())) { %>
+                Already RSVPed
+              <% } else { %>
+                <input type="checkbox" name="driveIds" value="<%= drive._id %>">
+              <% } %>
+
+            <% } else if (drive.status === 'closed') { %>
+              Closed
+
+            <% } else if (drive.status === 'cancelled') { %>
+              Cancelled
+
+            <% } %>
+          </td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+  <br>
+  <div style="text-align:left;">
+    <button id="rsvpButton" type="submit" style="display:none;">
+      RSVP
+    </button>
+  </div>
+  <script>
+    const checkboxes = document.querySelectorAll('input[name="driveIds"]');
+    const rsvpButton = document.getElementById('rsvpButton');
+
+    function toggleButton() {
+      const anyChecked = Array.from(checkboxes).some(cb => cb.checked);
+      rsvpButton.style.display = anyChecked ? 'inline-block' : 'none';
+    }
+
+    checkboxes.forEach(cb => {
+      cb.addEventListener('change', toggleButton);
+    });
+  </script>
+  </form>
+
+</body>
+</html>

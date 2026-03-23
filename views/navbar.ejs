@@ -3,15 +3,19 @@
   <div style="display:flex; align-items:center; gap:12px;">
     <% if (!user) { %>
       <a href="/">adopt a pet</a>
+
     <% } %>
 
     <% if (user && user.role === 'admin') { %>
       <a href="/admin">home</a>
+      <a href="/admin/create">create admin account</a>
+      <a href="/admin/adoption-drives">adoption drives</a>
       <a href="/admin/pet">pet listings</a>
     <% } else if (user && user.role === 'customer') { %>
       <a href="/customer">home</a>
       <a href="/customer/read">view account</a>
       <a href="/customer/update">update account</a>
+      <a href="/customer/adoption-drives">adoption drives</a>
       <a href="/customer/pet">adopt a pet</a>
     <% } %>
   </div>
@@ -23,6 +27,7 @@
     <% } else { %>
       <a href="/login">login</a>
       <a href="/register">register</a>
+      
     <% } %>
   </div>
 </nav>

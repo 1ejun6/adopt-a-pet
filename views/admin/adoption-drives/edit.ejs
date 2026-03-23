@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Edit Drive</title>
+</head>
+<body>
+    <%- include('../../navbar') %>
+
+    <h1>Edit Adoption Drive</h1>
+    <% if (e){ %>
+        <p><%= e %></p>
+    <% } %>
+
+    <form action="/admin/adoption-drives/<%= drive._id %>/edit" method="post">
+        <p>Title:</p>
+        <input type="text" name="title" value="<%= drive.title %>" required>
+
+        <p>Location:</p>
+        <input type="text" name="location" value="<%= drive.location %>" required>
+
+        <p>Date:</p>
+        <input
+            type="date"
+            name="eventdate"
+            value="<%= new Date(drive.eventdate).toISOString().split('T')[0] %>"
+            required
+        >
+
+        <p>Description:</p>
+        <textarea name="description"><%= drive.description || '' %></textarea>
+
+        <p>Max Capacity:</p>
+        <input type="number" name="mcapacity" min="1" value="<%= drive.mcapacity %>" required>
+
+        <p>Status:</p>
+        <select name="status" required>
+            <option value="open" <%= drive.status === 'open' ? 'selected' : '' %>>open</option>
+            <option value="closed" <%= drive.status === 'closed' ? 'selected' : '' %>>closed</option>
+            <option value="cancelled" <%= drive.status === 'cancelled' ? 'selected' : '' %>>cancelled</option>
+        </select>
+
+        <br><br>
+        <button type="submit">update drive</button>
+    </form>
+</body>
+</html>

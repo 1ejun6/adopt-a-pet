@@ -1,0 +1,59 @@
+<!--this index page is for guest who has not logged in or users that are already logged in-->
+<!--its for public viewing-->
+<!--they will be redirected to login page if they would like to RSVP-->
+<!DOCTYPE html>
+<html lang="en">
+<html>
+<head>
+  <title>Adoption Drives</title>
+</head>
+
+<body>
+  <%- include('../navbar') %>
+
+  <h1>Upcoming Adoption Drives</h1>
+
+  <!-- loop through drives -->
+<table border="1">
+  <thead>
+    <tr>
+      <th>Title</th>
+      <th>Location</th>
+      <th>Date</th>
+      <th>Description</th>
+      <th>Capacity</th>
+      <th>RSVP</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% drives.forEach(drive => { %>
+      <tr>
+        <td><%= drive.title %></td>
+        <td><%= drive.location %></td>
+        <td><%= drive.eventdate.toDateString() %></td>
+        <td><%= drive.description %></td>
+        <td><%= drive.attendees.length %> / <%= drive.mcapacity %></td>
+        <td>
+          <% if (drive.status === 'open') { %>
+            <% if (currentuser) { %>
+              <form action="/adoption-drives/<%= drive._id %>/rsvp" method="post">
+                <button type="submit">RSVP</button>
+              </form>
+            <% } else { %>
+              <form action="/login" method="get">
+                <button type="submit">RSVP</button>
+              </form>
+            <% } %>
+          <% } else if (drive.status === 'closed') { %>
+            Closed
+          <% } else if (drive.status === 'cancelled') { %>
+            Cancelled
+          <% } %>
+        </td>
+      </tr>
+    <% }) %>
+  </tbody>
+</table>
+
+</body>
+</html>

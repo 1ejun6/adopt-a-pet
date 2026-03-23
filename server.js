@@ -3,6 +3,13 @@ const server = express();
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 const session = require('express-session');
+const authcontroller = require('./controllers/authcontroller');
+const admincontroller = require('./controllers/admincontroller');
+const customercontroller = require('./controllers/customercontroller');
+const rsvpcontroller = require('./controllers/rsvpcontroller');
+const adminadoptdriveroutes = require('./routes/adminadoptdrive');
+const customeradoptdriveroutes = require('./routes/customeradoptdrive');
+const guestadoptdriveroutes = require('./routes/guestadoptdrive');
 const authroutes = require('./routes/auth');
 const adminroutes = require('./routes/admin');
 const customerroutes = require('./routes/customer');
@@ -27,6 +34,14 @@ server.use((req, res, next) => { //on every request
     next();
 });
 
+server.use('/admin', admincontroller);
+server.use('/customer', customercontroller);
+server.use('/', authcontroller);
+server.use('/', rsvpcontroller);
+
+server.use('/admin/adoption-drives', adminadoptdriveroutes);
+server.use('/customer/adoption-drives', customeradoptdriveroutes);
+server.use('/adoption-drives', guestadoptdriveroutes);
 server.use('/admin', adminroutes);
 server.use('/customer', customerroutes);
 server.use('/', authroutes);
@@ -45,6 +60,6 @@ async function connectdb() {
 
 function startserver() {
     const port = process.env.port;
-    server.listen(port, () => {console.log(`server running at http://localhost:${port}/`);});
+    server.listen(port, () => { console.log(`server running at http://localhost:${port}/`); });
 }
 connectdb().then(startserver);
