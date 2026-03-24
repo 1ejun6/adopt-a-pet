@@ -34,9 +34,6 @@ server.use((req, res, next) => { //on every request
     next();
 });
 
-server.use('/admin', admincontroller);
-server.use('/customer', customercontroller);
-server.use('/', authcontroller);
 server.use('/', rsvpcontroller);
 
 server.use('/admin/adoption-drives', adminadoptdriveroutes);
