@@ -15,6 +15,7 @@ const adminroutes = require('./routes/admin');
 const customerroutes = require('./routes/customer');
 const petadminroutes = require('./routes/petadmin');
 const petcustomerroutes = require('./routes/petcustomer');
+const adoptcontroller = require("./controllers/adoptcontroller")
 
 dotenv.config({ path: './.env' });
 
@@ -34,16 +35,9 @@ server.use((req, res, next) => { //on every request
     next();
 });
 
-server.use('/', rsvpcontroller);
-
-server.use('/admin', adminroutes);
-server.use('/admin/adoption-drives', adminadoptdriveroutes);
-server.use('/admin/pet', petadminroutes);
-server.use('/customer/adoption-drives', customeradoptdriveroutes);
-server.use('/adoption-drives', guestadoptdriveroutes);
-server.use('/customer', customerroutes);
-server.use('/', authroutes);
-server.use('/customer/pet', petcustomerroutes);
+server.use('/admin', admincontroller);
+server.use('/customer', customercontroller);
+server.use('/', authcontroller);
 
 async function connectdb() {
     try {

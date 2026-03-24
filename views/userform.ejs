@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Submitted Application</title>
+</head>
+<body>
+    <%- include('navbar') %>
+    <% const application = user[0] %>
+    <p style="color:green;">Submission successful!</p>
+
+    <h1>Application Received</h1>
+    <p>Reference ID: <%= application._id %></p>
+
+    <h2>Personal Information</h2>
+    <p><strong>Full Name:</strong> <%= application.fullName %></p>
+    <p><strong>Email:</strong> <%= application.email %></p>
+    <p><strong>Phone:</strong> <%= application.phone %></p>
+    <p><strong>Age:</strong> <%= application.age %></p>
+    <p><strong>Address:</strong> <%= application.address %></p>
+    <p><strong>Housing Type:</strong> <%= application.housingType %></p>
+
+    <h2>Adoption Preferences</h2>
+    <p><strong>Preferred Pet:</strong> <%= application.petType %></p>
+    <p><strong>Reason for Adopting:</strong> <%= application.reason %></p>
+    <p><strong>Existing Pets:</strong> <%= application.existingPets %></p>
+    <p><strong>Allergies:</strong> <%= application.allergies %></p>
+    <p><strong>Commitments:</strong> <%= application.commitments && application.commitments.length > 0 ? application.commitments.join(', ') : 'None' %></p>
+
+    <h2>Documents</h2>
+    <p><strong>NRIC:</strong> <%= application.nricDoc ? 'Uploaded' : 'Not provided' %></p>
+    <p><strong>Supporting Docs:</strong> <%= application.supportingDocs ? 'Uploaded' : 'Not provided' %></p>
+    <p><strong>Agreed to Terms:</strong> <%= application.agreeTerms ? 'Yes' : 'No' %></p>
+
+    <p>Submitted on: <%= new Date(application.cdate).toDateString() %></p>
+
+    <a href="/adoption/updateform?id=<%= application.userid %>">Update Submission</a>
+    <form action="/adoption/<%= application._id %>/delete" method="POST" style="display:inline;"
+        onsubmit="return confirm('Are you sure you want to delete your application?');">
+        <input type="hidden" name="_method" value="DELETE" />
+        <button type="submit">Delete Submission</button>
+    </form>
+
+</body>
+</html>
+
+

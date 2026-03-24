@@ -1,5 +1,8 @@
 const bcrypt = require('bcrypt');
 const user = require('../models/users');
+const { authenticated, customer } = require('../middleware');
+
+const router = express.Router();
 
 async function read(req, res, id, m = null, e = null) {
     try {
@@ -66,6 +69,4 @@ async function updateaccount(req, res) {
     } catch (error) {
         return update(req, res, req.session.user.id, null, 'error updating account');
     }
-}
-
-module.exports = {dashboard, readaccount, updateview, updateaccount};
+});
