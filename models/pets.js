@@ -14,6 +14,10 @@ const petSchema = new mongoose.Schema(
             type : Number,
             required : true,
         },
+        gender: {
+            type : String,
+            required : true
+        },
         weight : {
             type : Number,
             required : true,
