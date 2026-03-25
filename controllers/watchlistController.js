@@ -63,7 +63,6 @@ exports.getUpdateForm = async (req, res) => {
 
 exports.processUpdate = async (req, res) => {
     try {
-        console.log(req.body);
         const currentWatchlist = await Watchlist.find({ user: req.session.user.id }).sort({ ranking: 1 });
         if (!currentWatchlist) return res.render("error", { e: "Cannot find current watchlist" });
 
