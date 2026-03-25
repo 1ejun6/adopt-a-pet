@@ -13,6 +13,9 @@
   <% if (currentuser?.role=='admin' ) { %>
   <h3>Watchlist is only available for customers! Return to <a href="/admin">index</a>!</h3>
   <% } else if (currentuser?.role=='customer' ) { %>
+    <% if (alertMessage) { %>
+      <script>alert("<%= alertMessage %>")</script>
+    <% }; %>
   <table border="1">
     <tr>
       <th colspan="2">

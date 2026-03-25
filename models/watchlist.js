@@ -23,6 +23,12 @@ const watchlistSchema = new mongoose.Schema({
         type: Number,
         min: [0, "Minimum value for rank is 0"],
         required: [true, "Watchlist entry requires ranking"]
+    },
+    // required to inform user when pet is no longer available
+    petName: {
+        type: String,
+        trim: true,
+        required: [true, "Watchlist entry requires name"]
     }
 })
 
