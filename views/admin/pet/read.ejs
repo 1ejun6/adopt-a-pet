@@ -6,8 +6,8 @@
     <form action="/admin/pet/action" method="GET">
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
         <div>
-            <button type="submit" name="action" value="update">Update</button>
-            <button type="submit" name="action" value="delete">Delete</button>
+            <button id="updateButton" type="submit" name="action" value="update" disabled>Update</button>
+            <button id="deleteButton" type="submit" name="action" value="delete" disabled>Delete</button>
         </div>
         <button type="submit" formmethod="get" formaction="/admin/pet/create">Create</button>
     </div>
@@ -26,7 +26,9 @@
         </tr>
         <% pets.forEach( pet => { %>
             <tr>
-                <td style="text-align:center; vertical-align:middle;"><input type="radio" name="pid" value="<%= pet._id.toString() %>"></td>
+                <td style="text-align:center; vertical-align:middle;">
+                    <input type="radio" name="pid" value="<%= pet._id.toString() %>" onchange="enablebutton()">
+                </td>
                 <td><%= pet.name %></td>
                 <td><%= pet.species %></td>
                 <td><%= pet.age %> years old</td>
@@ -40,4 +42,10 @@
         <% }) %>
     </table>
     </form>
+    <script>
+        function enablebutton() {
+            document.getElementById('updateButton').disabled = false;
+            document.getElementById('deleteButton').disabled = false;
+        }
+    </script>
 </html>

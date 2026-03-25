@@ -4,8 +4,12 @@
     <h1>Adopt a Pet!</h1>
     <h3>Our furry little friends who are looking for a new home!</h3>
     <form action="adoption-application" method="post">
+    <div style="margin-bottom:16px; display: flex; justify-content: flex-end;">
+        <button type="submit">Adopt!</button>
+    </div>
     <table border="1">
         <tr>
+            <th style="width:30px; text-align:center; vertical-align:middle;"></th>
             <th>Name</th>
             <th>Species</th>
             <th>Age</th>
@@ -15,10 +19,10 @@
             <th>Status</th>
             <th>Description</th>
             <th>Photo</th>
-            <th>Select</th>
         </tr>
         <% pets.forEach( pet => { %>
         <tr>
+            <td style="text-align:center; vertical-align:middle;"><input type="radio" name="pet" value="<%= pet._id.toString() %>"></td>
             <td><%= pet.name %></td>
             <td><%= pet.species %></td>
             <td><%= pet.age %> years old</td>
@@ -28,11 +32,8 @@
             <td><%= pet.status %></td>
             <td><%= pet.description %></td>
             <td><img width="300" height="250" src="<%= pet.imageURL %>"></td>
-            <td><input type="radio" name="pet" value="<%= pet.pid %>"></td>
         </tr>
         <% }) %>
     </table>
-        <br>
-        <button type="submit">Adopt!</button>
     </form>
 </html>

@@ -1,9 +1,9 @@
 const express = require('express');
-const guestadoptdrivecontroller = require('../controllers/guestadoptdrivecontroller');
+const adoptdriveguestcontroller = require('../controllers/adoptdriveguestcontroller');
 
 const router = express.Router();
 
 // GET /adoption-drives (public page)
-router.get('/', guestadoptdrivecontroller.getguestalldrives);
+router.get('/', adoptdriveguestcontroller.getguestalldrives);
 
 module.exports = router;
