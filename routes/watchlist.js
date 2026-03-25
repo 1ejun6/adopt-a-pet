@@ -8,5 +8,5 @@ router.get('/', authenticated, custOnly, watchlistController.index);
 router.get("/add", authenticated, custOnly, watchlistController.addPetsView);
 router.post("/add", authenticated, custOnly, watchlistController.processAddedPets);
 router.get("/update", authenticated, custOnly, watchlistController.getUpdateForm);
-
+router.post("/update", authenticated, custOnly, watchlistController.processUpdate);
 module.exports = router;

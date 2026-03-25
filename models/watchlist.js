@@ -21,7 +21,7 @@ const watchlistSchema = new mongoose.Schema({
     },
     ranking: {
         type: Number,
-        min: [1, "Minimum value for rank is 1"],
+        min: [0, "Minimum value for rank is 0"],
         required: [true, "Watchlist entry requires ranking"]
     }
 })

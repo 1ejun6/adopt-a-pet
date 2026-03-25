@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>home</title>
+</head>
+
+<body>
+  <!-- This view is protected by authenticated middleware, ensuring a user exists -->
+  <%- include('../../navbar') %>
+  <% if (currentuser?.role=='admin' ) { %>
+  <h3>Watchlist is only available for customers! Return to <a href="/admin">index</a>!</h3>
+  <% } else if (currentuser?.role=='customer' ) { %>
+  <form action="/customer/watchlist/update" method="post">
+    <table border=1>
+      <tr>
+        <th colspan="6">
+          <h4>
+            <%= currentuser.name %>'s Watchlist Editor
+          </h4>
+        </th>
+      </tr>
+      <tr>
+        <th colspan="6">
+          Press to return: <button type="submit" name="submit">Return</button>
+        </th>
+      </tr>
+      <tr>
+        <th colspan="2">Pet</th>
+        <th>Your Comments</th>
+        <th colspan="2">Adjust Ranking</th>
+        <th>Delete</th>
+      </tr>
+      <% watchlist.forEach((entry, i) => { %>
+      <tr>
+        <th>
+          <%= entry.pet.name %>
+        </th>
+        <th><img src="<%= entry.pet.imageURL%>" width="100"></th>
+        <td><textarea name="<%= entry.pet._id %>" rows="4" cols="20"><%= entry.comments %></textarea></td>
+        <% if (watchlist.length > 1) { %>
+        <% if (i > 0) { %>
+        <th><button type="submit" name="Up/<%=entry.pet._id%>">Up</button></th>
+        <% } else { %>
+        <th>N.A.</th>
+        <% }; %>
+        <% if (i < watchlist.length - 1) {%>
+        <th><button type="submit" name="Down/<%=entry.pet._id%>">Down</button></th>
+        <% } else { %>
+        <th>N.A.</th>
+        <% }; %>
+        <% } else { %>
+        <th>N.A.</th>
+        <th>N.A.</th>
+        <% } %>
+        <th><button type="submit" name="Delete/<%=entry.pet._id%>">Delete</button>
+        </th>
+      </tr>
+      <% }) %>
+      <% if (remainingPets.length > 0) { %>
+      <tr>
+        <th colspan="6">You may also consider adding the following beauties!</th>
+      </tr>
+      <tr>
+        <th colspan="3">Pet</th>
+        <th colspan="2">Your Comments</th>
+        <th>Add</th>
+      </tr>
+      <% remainingPets.forEach(entry=> { %>
+      <tr>
+        <th>
+          <%= entry.name%>
+        </th>
+        <th><img src="<%= entry.imageURL %>" width="100"></th>
+        <td><strong>Species:</strong>
+          <%= entry.species %>, <strong>Age:</strong>
+          <%= entry.age %><br>
+          <strong>Weight:</strong>
+          <%= entry.weight %> kg<br> <strong>Description:</strong>
+          <%= entry.description %><br> <strong>Health Status:</strong>
+          <%= entry.health %>
+
+        <td colspan="2"><textarea name="<%=entry._id%>" rows="4" cols="20"></textarea>
+        </td>
+        <td><button type="submit" name="Add/<%=entry._id%>">Add</button></td>
+      </tr>
+      <% }); %>
+      <% }; %>
+    </table>
+    <br>
+  </form>
+  <% } else { %>
+  <!-- This should never run -->
+  <h1>Get away you <a href="/">unauthorized thing!</a></h1>
+  <% } %>
+</body>
+
+</html>

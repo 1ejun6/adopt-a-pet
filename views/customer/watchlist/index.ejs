@@ -10,51 +10,50 @@
 <body>
   <!-- This view is protected by authenticated middleware, ensuring a user exists -->
   <%- include('../../navbar') %>
-    <% if (currentuser?.role=='admin' ) { %>
-      <h3>Watchlist is only available for customers! Return to <a href="/admin">index</a>!</h3>
-      <% } else if (currentuser?.role=='customer' ) { %>
-        <table border="1">
-          <tr>
-            <th colspan="2">
-              <h1>
-                <%= currentuser.name %>'s Watchlist
-              </h1>
-            </th>
-          </tr>
-          <% if (watchlist.length===0) { %>
-            <tr>
-              <td>Oops. It seems like you don't have any pets in your watchlist. Would you like to <a
-                  href="/customer/watchlist/add">add</a> some?</td>
-            </tr>
-            <% } else { %>
-              <tr>
-                <td colspan="2">Click <a href="/customer/watchlist/update">here</a> to edit!</td>
-              </tr>
-              <% watchlist.forEach(entry=> { %>
-                <tr>
-                  <th colspan="2">
-                    <%= entry.ranking %>. <%= entry.pet.name %> (<%= entry.pet.species %>, <%= entry.pet.age %> years old)
-                  </th>
-                </tr>
-                <tr>
-                  <td>
-                    <img src="<%= entry.pet.imageURL %>" width="100">
-                  </td>
-                  <td>
-                    <strong>Weight:</strong>
-                    <%= entry.pet.weight %> kg<br> <strong>Description:</strong>
-                      <%= entry.pet.description %><br> <strong>Health Status:</strong>
-                        <%= entry.pet.health %><br> <strong>Your comments:</strong>
-                          <%= entry.comments %> <br><br><em>Last updated on <%= entry.dateUpdated %></em>
-                  </td>
-                </tr>
-                <% }); %>
-                  <% } %>
-        </table>
-        <% } else { %>
-          <!-- This should never run -->
-          <h1>Get away you <a href="/">unauthorized thing!</a></h1>
-          <% } %>
+  <% if (currentuser?.role=='admin' ) { %>
+  <h3>Watchlist is only available for customers! Return to <a href="/admin">index</a>!</h3>
+  <% } else if (currentuser?.role=='customer' ) { %>
+  <table border="1">
+    <tr>
+      <th colspan="2">
+        <h1>
+          <%= currentuser.name %>'s Watchlist
+        </h1>
+      </th>
+    </tr>
+    <% if (watchlist.length===0) { %>
+    <tr>
+      <td>Oops. It seems like you don't have any pets in your watchlist. Would you like to <a href="/customer/watchlist/add">add</a> some?</td>
+    </tr>
+    <% } else { %>
+    <tr>
+      <td colspan="2">Click <a href="/customer/watchlist/update">here</a> to edit!</td>
+    </tr>
+    <% watchlist.forEach(entry=> { %>
+    <tr>
+      <th colspan="2">
+        <%= entry.ranking %>. <%= entry.pet.name %> (<%= entry.pet.species %>, <%= entry.pet.age %> years old)
+      </th>
+    </tr>
+    <tr>
+      <td>
+        <img src="<%= entry.pet.imageURL %>" width="100">
+      </td>
+      <td>
+        <strong>Weight:</strong>
+        <%= entry.pet.weight %> kg<br> <strong>Description:</strong>
+        <%= entry.pet.description %><br> <strong>Health Status:</strong>
+        <%= entry.pet.health %><br> <strong>Your comments:</strong>
+        <%= entry.comments || "-" %> <br><br><em>Last updated on <%= entry.dateUpdated %></em>
+      </td>
+    </tr>
+    <% }); %>
+    <% } %>
+  </table>
+  <% } else { %>
+  <!-- This should never run -->
+  <h1>Get away you <a href="/">unauthorized thing!</a></h1>
+  <% } %>
 </body>
 
 </html>
