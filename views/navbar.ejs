@@ -8,7 +8,7 @@
     <% if (user && user.role === 'admin') { %>
       <a href="/admin">home</a>
       <a href="/admin/create">create admin account</a>
-      <a href="/admin/confirmAppointments">confirm assistance for appointments</a>
+      <a href="/admin/appointment">confirm assistance for appointments</a>
     <% } else if (user && user.role === 'customer') { %>
       <a href="/customer">home</a>
       <a href="/customer/read">view account</a>

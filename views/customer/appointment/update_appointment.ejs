@@ -8,6 +8,8 @@
 </head>
 
 <body>
+    <%- include('../../navbar') %>
+
     <h3>Update Appointment</h3>
     <% if (appointment_details) { %>
         <form action="/customer/appointment/update" method="POST">

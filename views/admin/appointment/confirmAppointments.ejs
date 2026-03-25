@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Confirm Assistance for Appointments</title>
+</head>
+<body>
+    <%- include('../../navbar') %>
+
+
+    <h1>Manage Appointments</h1>
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+        <div style="display:flex; gap:10px; align-items:center;">
+            <form id="deleteForm" action="/admin/appointment/delete" method="GET" style="margin:0;">
+                <button id="deleteButton" type="submit">Delete</button>
+            </form>
+        </div>
+        <form action="/admin/appointment/create" method="GET">
+            <button type="submit">Create</button>
+        </form>
+    </div>
+
+    <form action="/admin/appointment/" method="POST">
+        <table border="1">
+            <tr>
+                <th>User</th>
+                <th>User Email</th>
+                <th>Appointment Date</th>
+                <th>Appointment Timeslot</th>
+                <th>Seeing Pet Species</th>
+                <th>Location</th>
+                <th>Appointment Status</th>
+                <th>Confirm Appointment?</th>
+            </tr>
+            <% for (let i=0; i < allAppointments.length; i ++) {%>
+                <tr>
+                    <td><%=users_list[i].name%></td>
+                    <td><%=users_list[i].email%></td>
+                    <td><%= allAppointments[i].appointmentdate.toLocaleString('en-GB', {day: '2-digit',month: '2-digit',year: 'numeric'}) %></td>
+                    <td><%= allAppointments[i].timeslot %></td>
+                    <td><%= allAppointments[i].petspecies %></td>
+                    <td><%= allAppointments[i].location %></td>
+                    <td><%= allAppointments[i].status %></td>
+                    <td><input type="checkbox" name="appointmentIds" value="<%= allAppointments[i]._id %>" <%=allAppointments[i].status === 'Appointment Confirmed!' ? 'disabled' : ''%>></td>
+                </tr>
+            <% } %>
+        </table>
+        <br>
+        <button type="submit">Confirm Selected Appointments</button>
+    </form>
+</body>
+</html>

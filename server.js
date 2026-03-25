@@ -6,6 +6,9 @@ const session = require('express-session');
 const authcontroller = require('./controllers/authcontroller');
 const admincontroller = require('./controllers/admincontroller');
 const customercontroller = require('./controllers/customercontroller');
+const adminappoinment = require('./controllers/adminappointment');
+const customerappointment = require('./controllers/customerappointment');
+const { customer } = require('./middleware');
 
 dotenv.config({ path: './.env' });
 
@@ -28,6 +31,8 @@ server.use((req, res, next) => { //on every request
 server.use('/admin', admincontroller);
 server.use('/customer', customercontroller);
 server.use('/', authcontroller);
+server.use('/customer/appointment', customerappointment);
+server.use('/admin/appointment', adminappoinment);
 
 async function connectdb() {
     try {

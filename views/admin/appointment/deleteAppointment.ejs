@@ -3,21 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Confirm Assistance for Appointments</title>
+    <title>Delete Appointments</title>
 </head>
 <body>
-    <form action="/admin/confirmAppointments" method="POST">
-        <table border="1">
-            <tr>
-                <th>User</th>
-                <th>User Email</th>
-                <th>Appointment Date</th>
-                <th>Appointment Timeslot</th>
-                <th>Seeing Pet Species</th>
-                <th>Location</th>
-                <th>Appointment Status</th>
-                <th>Confirm Appointment?</th>
-            </tr>
+    <%- include('../../navbar') %>
+    <h1>Delete Appointments</h1>
+    <form action="/admin/appointment/delete" method="POST">
+            <table border="1">
+                <tr>
+                    <th>User</th>
+                    <th>User Email</th>
+                    <th>Appointment Date</th>
+                    <th>Appointment Timeslot</th>
+                    <th>Seeing Pet Species</th>
+                    <th>Location</th>
+                    <th>Appointment Status</th>
+                    <th>Delete Appointment?</th>
+                </tr>
             <% for (let i=0; i < allAppointments.length; i ++) {%>
                 <tr>
                     <td><%=users_list[i].name%></td>
@@ -27,12 +29,12 @@
                     <td><%= allAppointments[i].petspecies %></td>
                     <td><%= allAppointments[i].location %></td>
                     <td><%= allAppointments[i].status %></td>
-                    <td><input type="checkbox" name="appointmentIds" value="<%= allAppointments[i]._id %>"></td>
+                    <td><input type="checkbox" name="appointmentIds" value="<%= allAppointments[i]._id %>,<%=users_list[i].id%>"></td>
                 </tr>
             <% } %>
         </table>
         <br>
-        <button type="submit">Confirm Selected Appointments</button>
+        <button type="submit">Confirm Deletion of Selected Appointments</button>
     </form>
 </body>
 </html>
