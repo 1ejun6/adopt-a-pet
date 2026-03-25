@@ -9,7 +9,7 @@
     <%- include('../navbar') %>
     <% if (m) { %><p style="color:green;"><%= m %></p><% } %>
     <% if (e) { %><p style="color:red;"><%= e %></p><% } %>
-    <form action="/customer/update" method="post">
+    <form action="/customer/user/update" method="post">
         <div>
             <label>name</label>
             <input type="text" name="name" value="<%= account.name %>" required>

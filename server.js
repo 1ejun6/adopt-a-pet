@@ -36,13 +36,13 @@ server.use((req, res, next) => { //on every request
 
 server.use('/', rsvpcontroller);
 
+server.use('/admin', adminroutes);
 server.use('/admin/adoption-drives', adminadoptdriveroutes);
+server.use('/admin/pet', petadminroutes);
 server.use('/customer/adoption-drives', customeradoptdriveroutes);
 server.use('/adoption-drives', guestadoptdriveroutes);
-server.use('/admin', adminroutes);
 server.use('/customer', customerroutes);
 server.use('/', authroutes);
-server.use('/admin/pet', petadminroutes);
 server.use('/customer/pet', petcustomerroutes);
 
 async function connectdb() {

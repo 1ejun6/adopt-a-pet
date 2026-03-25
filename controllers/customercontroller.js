@@ -25,8 +25,8 @@ async function update(req, res, id, m = null, e = null) {
     }
 }
 
-async function index(req, res) {
-    return res.render('customer-index', { m: `${req.session.user.email}` });
+async function dashboard(req, res) {
+    return res.render('customer/index', { m: `${req.session.user.email}` });
 }
 
 async function readaccount(req, res) {
@@ -68,4 +68,4 @@ async function updateaccount(req, res) {
     }
 }
 
-module.exports = {index, readaccount, updateview, updateaccount};
+module.exports = {dashboard, readaccount, updateview, updateaccount};

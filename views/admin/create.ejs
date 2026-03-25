@@ -9,7 +9,7 @@
     <%- include('../navbar') %>
     <% if (m) { %><p style="color:green;"><%= m %></p><% } %>
     <% if (e) { %><p style="color:red;"><%= e %></p><% } %>
-    <form action="/admin/create" method="post">
+    <form action="/admin/user/create" method="post">
         <div>
             <label>name</label>
             <input type="text" name="name" required>

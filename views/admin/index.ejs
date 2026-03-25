@@ -20,10 +20,10 @@
     <form method="post">
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
         <div>
-          <button type="submit" id="updatebutton" formmethod="get" formaction="/admin/update" disabled>update</button>
-          <button type="submit" id="deletebutton" formaction="/admin/delete" disabled>delete</button>
+          <button type="submit" id="updatebutton" formmethod="get" formaction="/admin/user/update" disabled>update</button>
+          <button type="submit" id="deletebutton" formaction="/admin/user/delete" disabled>delete</button>
         </div>
-        <button type="submit" formmethod="get" formaction="/admin/create">create</button>
+        <button type="submit" formmethod="get" formaction="/admin/user/create">create</button>
       </div>
       <table border="1">
         <thead>
@@ -48,7 +48,7 @@
     </form>
   <% } else { %>
     <div style="display:flex; justify-content:flex-end; margin-bottom:8px;">
-      <form method="get" action="/admin/create" style="margin:0;">
+      <form method="get" action="/admin/user/create" style="margin:0;">
         <button type="submit">create</button>
       </form>
     </div>
@@ -66,8 +66,8 @@
         const ids = Array.from(document.querySelectorAll('input[name="selectedid[]"]:checked')).map(c => c.value);
         ubutton.disabled = count !== 1;
         dbutton.disabled = count === 0;
-        ubutton.formAction = count === 1 ? `/admin/update/${ids[0]}` : '/admin/update';
-        dbutton.formAction = ids.length ? `/admin/delete/${ids.join('-')}` : '/admin/delete';
+        ubutton.formAction = count === 1 ? `/admin/user/update/${ids[0]}` : '/admin/user/update';
+        dbutton.formAction = ids.length ? `/admin/user/delete/${ids.join('-')}` : '/admin/user/delete';
       }
     });
     </script>

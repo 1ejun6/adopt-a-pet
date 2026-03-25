@@ -9,6 +9,12 @@
     <%- include('../navbar') %>
     <% if (m) { %><p style="color:green;"><%= m %></p><% } %>
     <% if (e) { %><p style="color:red;"><%= e %></p><% } %>
+    <h1>your profile</h1>
+    <div style="margin-bottom:16px; display: flex; justify-content: flex-end;">
+        <form action="/customer/user/update" method="get">
+            <button type="submit">update</button>
+        </form>
+    </div>
     <p>name: <%= account.name %></p>
     <p>email: <%= account.email %></p>
     <p>created: <%= new Date(account.cdate).toLocaleString() %></p>

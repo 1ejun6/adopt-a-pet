@@ -11,6 +11,10 @@ async function renderindex(req, res, m = null, e = null, deleted = null) {
     }
 }
 
+async function dashboard(req, res) {
+    return res.render('admin/dashboard');
+}
+
 async function index(req, res) {
     return renderindex(req, res);
 }
@@ -115,4 +119,4 @@ async function saveupdate(req, res) {
     }
 }
 
-module.exports = {index, createview, create, updateview, deleteaccounts, saveupdate};
+module.exports = {dashboard, index, createview, create, updateview, deleteaccounts, saveupdate};
