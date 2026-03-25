@@ -1,37 +1,40 @@
 <html>
-    <%- include('../../navbar') %>
-    
-    <h1>Adopt a Pet!</h1>
-    <h3>Our furry little friends who are looking for a new home!</h3>
-    <em>Want to keep track of your favorite pets? Check out our <a href = "/customer/watchlist">watchlist</a>!</em><br><br>
-    <form action="adoption-application" method="post">
-    <table border="1">
-        <tr>
-            <th>Name</th>
-            <th>Species</th>
-            <th>Age</th>
-            <th>Weight</th>
-            <th>Health</th>
-            <th>Status</th>
-            <th>Description</th>
-            <th>Photo</th>
-            <th>Select</th>
-        </tr>
-        <% pets.forEach( pet => { %>
-        <tr>
-            <td><%= pet.name %></td>
-            <td><%= pet.species %></td>
-            <td><%= pet.age %> years old</td>
-            <td><%= pet.weight %> kg</td>
-            <td><%= pet.health %></td>
-            <td><%= pet.status %></td>
-            <td><%= pet.description %></td>
-            <td><img width="300" height="250" src="<%= pet.imageURL %>"></td>
-            <td><input type="radio" name="pet" value="<%= pet.pid %>"></td>
-        </tr>
-        <% }) %>
-    </table>
-        <br>
-        <button type="submit">Adopt!</button>
-    </form>
+<%- include('../../navbar') %>
+
+<div class="top=bar">
+  <h1>Adopt a Pet!</h1>
+  <h3>Our furry little friends who are looking for a new home!</h3>
+  <em>Select your favorite pets and track them in your <a href="/customer/watchlist">watchlist</a>!</em><br><br>
+  <form action="adoption-application" method="post">
+    <button type="submit" formaction="/customer/watchlist/fill-info">Track this pet!</button>
+    <button type="submit">Adopt!</button>
+</div>
+<table border="1">
+  <tr>
+    <th>Name</th>
+    <th>Species</th>
+    <th>Age</th>
+    <th>Weight</th>
+    <th>Health</th>
+    <th>Status</th>
+    <th>Description</th>
+    <th>Photo</th>
+    <th>Select</th>
+  </tr>
+  <% pets.forEach( pet => { %>
+  <tr>
+    <td><%= pet.name %></td>
+    <td><%= pet.species %></td>
+    <td><%= pet.age %> years old</td>
+    <td><%= pet.weight %> kg</td>
+    <td><%= pet.health %></td>
+    <td><%= pet.status %></td>
+    <td><%= pet.description %></td>
+    <td><img width="300" height="250" src="<%= pet.imageURL %>"></td>
+    <td><input type="radio" name="pet" value="<%= pet._id %>"></td>
+  </tr>
+  <% }) %>
+</table>
+</form>
+
 </html>

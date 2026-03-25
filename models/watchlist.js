@@ -1,17 +1,17 @@
 const mongoose = require("mongoose");
 
 const watchlistSchema = new mongoose.Schema({
-    pet: {
+    petId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Pet',
         required: [true, "Watchlist entry does not reference valid pet"]
     },
-    user: {
+    userId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'users',
         required: [true, "Watchlist entry must belong to valid user"]
     },
-    dateUpdated: {
+    lastUpdated: {
         type: Date,
         required: [true, "Watchlist entry requires valid date"]
     },
@@ -32,5 +32,5 @@ const watchlistSchema = new mongoose.Schema({
     }
 })
 
-watchlistSchema.index({ user: 1, pet: 1}, { unique: true});
+watchlistSchema.index({ userId: 1, petId: 1}, { unique: true});
 module.exports = mongoose.model('Watchlist', watchlistSchema);

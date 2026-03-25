@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>home</title>
+</head>
+
+<body>
+  <!-- This view is protected by authenticated middleware, ensuring a user exists -->
+  <%- include('../../navbar') %>
+  <% if (!pet) { %>
+  <h3>Uh oh. It seems like this pet is no longer available. Go <a href="/customer/pet">back</a>!</h3>
+  <% } else { %>
+  <form method="post" action="/customer/watchlist/create">
+    <table border="1">
+      <tr>
+        <% if (!exists) { %>
+        <th colspan="2">Wanna keep track of <%= pet.name %>?</th>
+        <% } else { %>
+        <th colspan="2"><%= pet.name %> is already in your watchlist. You can change your comments here though.</th>
+        <% }; %>
+      </tr>
+      <tr>
+        <th>
+          <img src="<%= pet.imageURL %>" width="100">
+        </th>
+        <td>
+          <strong>Species:</strong> <%= pet.species %><br>
+          <strong>Age:</strong> <%= pet.age %><br>
+          <strong>Weight:</strong> <%= pet.weight %><br>
+          <strong>Health status:</strong> <%= pet.health %><br>
+          <strong>Description:</strong> <%= pet.description %>
+        </td>
+      </tr>
+      <tr>
+        <th colspan="2">Your comments (optional):</th>
+      </tr>
+      <tr>
+        <td colspan="2">
+          <textarea name="comments/<%= pet._id %>" cols="90" rows="8"><%= exists ? exists.comments : "" %></textarea>
+        </td>
+      </tr>
+    </table>
+    <br>
+    <% if (!exists) { %>
+    <button type="submit">Add to watchlist!</button>
+    <% } else { %>
+    <button type="submit">Update watchlist!</button>
+    <% }; %>
+  </form>
+  <% }; %>
+</body>
+
+</html>

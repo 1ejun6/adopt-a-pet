@@ -4,7 +4,7 @@ const Pet = require('../models/pets');
 
 async function cleanRanking(userId) {
     try {
-        const orderedWatchlist = await Watchlist.find({ user: userId })
+        const orderedWatchlist = await Watchlist.find({ userId })
             .sort({ ranking: 1 })
             .lean()
         if (!orderedWatchlist) throw new Error("Could not get watchlist");
@@ -30,15 +30,17 @@ async function cleanRanking(userId) {
 exports.index = async (req, res) => {
     try {
         const userId = req.session.user.id;
-        let watchlist = await Watchlist.find({ user: userId })
+        const user = await User.findcustomerbyid(userId);
+        const name = user.name;
+        let watchlist = await Watchlist.find({ userId })
             .sort({ ranking: 1 })
-            .populate('pet')
+            .populate('petId')
             .lean();
 
         if (!watchlist) throw new Error("Could not get watchlist");
 
         const missingPets = watchlist
-            .filter(entry => entry.pet === null || entry.pet === undefined);
+            .filter(entry => entry.petId === null || entry.petId === undefined);
 
         let alertMessage = null;
         if (missingPets.length > 0) {
@@ -48,10 +50,9 @@ exports.index = async (req, res) => {
             if (!deleteMissing) throw new Error("Could not delete stale watchlist entries");
 
             await cleanRanking(userId);
-
-            watchlist = await Watchlist.find({ user: userId })
+            watchlist = await Watchlist.find({ userId })
                 .sort({ ranking: 1 })
-                .populate('pet')
+                .populate('petId')
                 .lean();
 
             if (!watchlist) throw new Error("Could not get updated watchlist");
@@ -63,47 +64,58 @@ exports.index = async (req, res) => {
             });
         };
 
-        res.render("customer/watchlist/index", { watchlist, alertMessage });
+        res.render("customer/watchlist/index", { watchlist, alertMessage, name });
     } catch (error) {
         res.render('error', { e: error });
     };
 };
 
-exports.addPetsView = async (req, res) => {
+exports.getUserComments = async (req, res) => {
     try {
-        const watchlist = await Watchlist.find({ user: req.session.user.id }).lean();
-        if (!watchlist) throw new Error("Could not get watchlist");
-        if (watchlist.length > 0) return res.redirect("/customer/watchlist");
-        const currentPets = await Pet.getAllPets();
-        res.render("customer/watchlist/add", { currentPets });
+        const result = req.body;
+        const userId = req.session.user.id;
+        if (Object.keys(result).length === 0) {
+            return res.redirect("/customer/pet");
+        };
+        const petId = result.pet;
+        const exists = await Watchlist.findOne({ petId, userId }).lean();
+        const pet = await Pet.getPetbyPID(petId).lean();
+        res.render("customer/watchlist/fill-info", { pet, exists });
     } catch (error) {
-        res.render('error', { e: error });
+        res.render("error", { e: error });
     }
 };
 
-exports.processAddedPets = async (req, res) => {
+exports.processCreatedPets = async (req, res) => {
     try {
         const result = req.body;
-        let selected = result.selected;
-        if (!selected) return res.redirect('/customer/watchlist');
-        if (!Array.isArray(selected)) selected = [selected];
-
-        const pets = await Pet.getAllPets();
-        if (!pets) throw new Error("Could not get pets");
-        const watchlistEntries = selected.map((petId, index) => {
-            const pet = pets.filter(pet => pet._id.toString() === petId)[0];
-            return {
-                pet: petId,
-                user: req.session.user.id,
-                dateUpdated: new Date(),
-                comments: result[petId],
-                ranking: index + 1,
+        const userId = req.session.user.id;
+        const body = Object.keys(result)[0];
+        const petId = body.split("/")[1];
+        const comments = result[body];
+        const pet = await Pet.getPetbyPID(petId);
+        const maxRanking = await Watchlist.countDocuments({ userId });
+        if (!pet) return res.render("customer/watchlist/fill-info", { pet: null, exists: null });
+        const exists = await Watchlist.findOne({ petId, userId }).lean();
+        if (!exists) {
+            const createPet = await Watchlist.create({
+                petId: petId,
+                userId: userId,
+                lastUpdated: new Date(),
+                comments: comments,
+                ranking: maxRanking + 1,
                 petName: pet.name
-            };
-        });
+            });
+            if (!createPet) throw new Error("Unable to create new watchlist entry!");
+        } else {
+            const updatePet = await Watchlist.findOneAndUpdate(
+                { petId, userId },
+                { $set: { comments: comments } },
+                { returnDocument: "after" }
+            );
+            if (!updatePet) throw new Error("Could not update comments of pet")
+        };
 
-        const createEntries = await Watchlist.insertMany(watchlistEntries);
-        if (!createEntries) throw new Error("Could not insert entries");
         res.redirect('/customer/watchlist');
     } catch (error) {
         res.render("error", { e: error });
@@ -112,17 +124,23 @@ exports.processAddedPets = async (req, res) => {
 
 exports.getUpdateForm = async (req, res) => {
     try {
-        const watchlist = await Watchlist.find({ user: req.session.user.id })
+        const user = await User.findcustomerbyid(req.session.user.id);
+        const name = user.name;
+        const watchlist = await Watchlist.find({ userId: req.session.user.id })
             .sort({ ranking: 1 })
-            .populate('pet');
+            .populate('petId')
+            .lean();
         if (!watchlist) throw new Error("Could not get watchlist");
-        const existingPets = watchlist.map(entry => entry.pet._id);
+        const missingPets = watchlist
+            .filter(entry => entry.petId === null || entry.petId === undefined);
+        if (missingPets.length > 0) return res.redirect("/customer/watchlist");
+        const existingPets = watchlist.map(entry => entry.petId._id);
         const pets = await Pet.getAllPets()
         if (!pets) throw new Error("Could not get all pets");
         const remainingPets = pets.filter(pet =>
             !existingPets.some(existing => existing.equals(pet._id)));
         if (watchlist.length === 0) return res.redirect("/customer/watchlist");
-        res.render("customer/watchlist/update", { watchlist, remainingPets });
+        res.render("customer/watchlist/update", { watchlist, remainingPets, name });
     } catch (error) {
         res.render("error", { e: error });
     }
@@ -133,17 +151,19 @@ exports.processUpdate = async (req, res) => {
     const body = req.body;
 
     try {
-        let watchlist = await Watchlist.find({ user: userId })
+        let watchlist = await Watchlist.find({ userId })
             .sort({ ranking: 1 })
-            .populate('pet')
+            .populate('petId')
             .lean();
 
         if (!watchlist) throw new Error("Could not get watchlist");
-        const missingPets = watchlist
-            .filter(entry => entry.pet === null || entry.pet === undefined);
-        if (missingPets.length > 0) return res.redirect("/customer/watchlist"); 
 
         await updateComments(userId, body);
+
+        const missingPets = watchlist
+            .filter(entry => entry.petId === null || entry.petId === undefined);
+        if (missingPets.length > 0) return res.redirect("/customer/watchlist");
+
         const actionKey = Object.keys(body).find(key =>
             key === "submit" ||
             key.startsWith('Delete') ||
@@ -160,7 +180,7 @@ exports.processUpdate = async (req, res) => {
             } else if (actionKey.startsWith("Down")) {
                 await handleMove(userId, actionKey, "Down");
             } else if (actionKey.startsWith("Add")) {
-                await handleAdd(userId, actionKey);
+                await handleCreate(userId, actionKey);
             } else if (actionKey === 'submit') {
                 return res.redirect('/customer/watchlist');
             }
@@ -174,12 +194,12 @@ exports.processUpdate = async (req, res) => {
     async function handleDelete(userId, actionKey) {
         const petId = actionKey.split("/")[1];
         if (!petId) throw new Error("Invalid delete: missing pet ID");
-        const entry = await Watchlist.findOne({ user: userId, pet: petId });
+        const entry = await Watchlist.findOne({ userId, petId });
         if (!entry) throw new Error("Entry to delete not found");
-        const result = await Watchlist.deleteOne({ user: userId, pet: petId });
+        const result = await Watchlist.deleteOne({ userId, petId });
         if (result.deletedCount !== 1) throw new Error("Could not delete entry");
         const updateRank = await Watchlist.updateMany(
-            { user: userId, ranking: { $gt: entry.ranking } },
+            { userId: userId, ranking: { $gt: entry.ranking } },
             { $inc: { ranking: -1 } }
         );
         if (!updateRank) throw new Error("Could not update rankings!");
@@ -188,44 +208,44 @@ exports.processUpdate = async (req, res) => {
         const petId = actionKey.split('/')[1];
         if (!petId) throw new Error("Missing pet ID");
 
-        const currentEntry = await Watchlist.findOne({ user: userId, pet: petId });
+        const currentEntry = await Watchlist.findOne({ userId, petId });
         if (!currentEntry) throw new Error("Entry to move missing");
 
         const currentRank = currentEntry.ranking;
         const targetRank = direction === 'Up' ? currentRank - 1 : currentRank + 1;
 
-        const otherEntry = await Watchlist.findOne({ user: userId, ranking: targetRank });
+        const otherEntry = await Watchlist.findOne({ userId, ranking: targetRank });
         if (!otherEntry) throw new Error(`No entry at rank ${targetRank}`);
 
         currentEntry.ranking = 0;
         currentEntry.save();
         const updateOther = await Watchlist.updateOne(
-            { user: req.session.user.id, ranking: targetRank },
-            { $set: { ranking: currentRank, dateUpdated: new Date() } },
+            { userId: userId, ranking: targetRank },
+            { $set: { ranking: currentRank, lastUpdated: new Date() } },
             { runValidators: true }
         );
         const updateCurrent = await Watchlist.updateOne(
-            { user: req.session.user.id, ranking: 0 },
-            { $set: { ranking: targetRank, dateUpdated: new Date() } },
+            { userId: userId, ranking: 0 },
+            { $set: { ranking: targetRank, lastUpdated: new Date() } },
             { runValidators: true }
         );
         if (!updateOther || !updateCurrent) throw new Error("Could not swap ranking");
 
     };
-    async function handleAdd(userId, actionKey) {
+    async function handleCreate(userId, actionKey) {
         const petId = actionKey.split("/")[1];
         if (!petId) throw new Error("Missing pet ID");
 
         const pet = await Pet.getPetbyPID(petId);
         if (!pet) throw new Error("Pet no longer available/not found");
 
-        const newRank = await Watchlist.countDocuments({ user: userId }) + 1;
+        const newRank = await Watchlist.countDocuments({ userId }) + 1;
         if (!newRank) throw new Error("Could not retrieve watchlist length");
 
         const createNew = await Watchlist.create({
-            pet: petId,
-            user: userId,
-            dateUpdated: new Date(),
+            petId: petId,
+            userId: userId,
+            lastUpdated: new Date(),
             comments: body[petId],
             ranking: newRank,
             petName: pet.name
@@ -235,19 +255,19 @@ exports.processUpdate = async (req, res) => {
     };
 
     async function updateComments(userId, body) {
-        const entries = await Watchlist.find({ user: userId }).lean();
+        const entries = await Watchlist.find({ userId }).lean();
 
         const operations = [];
         for (const entry of entries) {
-            const newComment = body[entry.pet.toString()];
+            const newComment = body[entry.petId.toString()];
             if (newComment && entry.comments !== newComment) {
                 operations.push({
                     updateOne: {
-                        filter: { user: userId, pet: entry.pet },
+                        filter: { userId, petId: entry.petId },
                         update: {
                             $set: {
                                 comments: newComment,
-                                dateUpdated: new Date()
+                                lastUpdated: new Date()
                             }
                         }
                     }

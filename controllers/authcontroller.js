@@ -94,7 +94,6 @@ async function login(req, res) {
             id: String(existinguser._id),
             email: existinguser.email,
             role: existinguser.role,
-            name: existinguser.name
         };
         await savesession(req);
 
