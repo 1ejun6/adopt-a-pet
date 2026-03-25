@@ -2,6 +2,9 @@ const bcrypt = require('bcrypt');
 const user = require('../models/users');
 const { authenticated, customer } = require('../middleware');
 
+// const Adoption = require('../models/adopt-form');
+// const 
+
 const router = express.Router();
 
 async function read(req, res, id, m = null, e = null) {
@@ -70,3 +73,4 @@ async function updateaccount(req, res) {
         return update(req, res, req.session.user.id, null, 'error updating account');
     }
 });
+

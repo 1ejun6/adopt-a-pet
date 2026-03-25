@@ -38,6 +38,7 @@ server.use((req, res, next) => { //on every request
 server.use('/admin', admincontroller);
 server.use('/customer', customercontroller);
 server.use('/', authcontroller);
+server.use('/adoption', adoptcontroller)
 
 async function connectdb() {
     try {
