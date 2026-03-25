@@ -147,25 +147,6 @@ exports.processUpdate = async (req, res) => {
             return res.redirect("/customer/watchlist");
         };
 
-
-        /*
-        const currentUser = await User.findcustomerbyid(req.session.user.id);
-        if (!currentUser) return res.render('error', { e: "User not found!" });
-        if (req.body.selected) s
-            let selected = req.body.selected;
-            if (!Array.isArray(selected)) selected = [selected];
-            const createWatchlistEntries = selected.map((selection, i) => {
-                return Watchlist.create({
-                    pet: selection,
-                    user: currentUser._id,
-                    dateUpdated: new Date(),
-                    comments: req.body[selection],
-                    ranking: i + currentMaxRanking + 1
-                });
-            });
-        const createdWatchlist = await Promise.all(createWatchlistEntries);
-        if (!createdWatchlist) return res.render("error", {e: "Could not add new entries."});
-        }; */
         res.redirect("/customer/watchlist/update");
     } catch (error) {
         res.render("error", { e: error });
