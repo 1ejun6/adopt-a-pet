@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>Pet Adoption Application</title>
+</head>
+
+<body>
+  <%- include('../../navbar') %>
+  <% if (m) { %><p style="color:green;"><%= m %></p><% } %>
+  <% if (e) { %><p style="color:red;"><%= e %></p><% } %>
+  
+  <strong><u>Pet Adoption Application</u></strong>
+
+  <form action="/adoption/update?id=<%= user._id %>" method="POST">
+
+    <label for="housingtype">Housing Type *</label><br>
+    <select id="housingtype" name="housingtype" required>
+      <option value="">Select your housing type</option> 
+      <option value="hdb" <%= user.housingtype === 'hdb' ? 'selected' : '' %>>HDB Flat</option>
+      <option value="condo" <%= user.housingtype === 'condo' ? 'selected' : '' %>>Condominium</option>
+      <option value="landed" <%= user.housingtype === 'landed' ? 'selected' : '' %>>Landed Property</option>
+      <option value="other" <%= user.housingtype === 'other' ? 'selected' : '' %>>Other</option>
+    </select><br><br>
+
+    <label for="experience">Years of experience with pets *</label><br>
+    <textarea id="experience" name="experience" rows="4" cols="50"
+      placeholder="E.g. 2 years" required><%= user.experience %></textarea>
+
+    <label for="reasonforadoption">Why do you want to adopt? *</label><br>
+    <textarea id="reasonforadoption" name="reasonforadoption" rows="4" cols="50"
+      placeholder="Tell us why you'd like to adopt a pet..." required><%= user.reasonforadoption %></textarea>
+
+
+    <strong><u>5. Legal Agreement</u></strong> 
+
+      By submitting this application, I confirm that all information provided is accurate and truthful.
+      I understand that submitting false information may result in rejection of my application.
+      I agree to provide a safe, loving, and permanent home for the adopted pet. I consent to a home
+      visit or follow-up check by the organisation if deemed necessary. I acknowledge that the
+      organisation reserves the right to decline any application without providing reasons. My personal
+      data will be collected and used solely for the purposes of processing this adoption application,
+      in accordance with the Personal Data Protection Act (PDPA) of Singapore.
+
+    <input type="checkbox" id="legalagreementaccepted" name="legalagreementaccepted" value="true" <%= user.legalagreementaccepted ? 'checked' : '' %> required />
+    <label for="legalagreementaccepted">I have read and agree to the terms and conditions above *</label><br><br>
+    <button type="submit">Submit Application</button>
+
+  </form>
+</body>
+
+</html>

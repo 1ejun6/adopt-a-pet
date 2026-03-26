@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Manage Applications</title>
+</head>
+<body>
+    <%- include('../../navbar') %>
+
+    <h1>Adoption Applications</h1>
+
+    <% if (e) { %>
+        <p style="color:red;"><%= e %></p>
+    <% } %>
+
+    <% if (!forms || forms.length === 0) { %>
+        <p>No applications found.</p>
+    <% } else { %>
+        <table border="1">
+            <thead>
+                <tr>
+                    <th>Application ID</th>
+                    <th>User ID</th>
+                    <th>Housing Type</th>
+                    <th>Experience</th>
+                    <th>Reason for Adoption</th>
+                    <th>Agreed to Terms</th>
+                    <th>Status</th>
+                    <th>Submitted On</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% forms.forEach(form => { %>
+                    <tr>
+                        <td><%= form._id %></td>
+                        <td><%= form.uid %></td>
+                        <td><%= form.housingtype %></td>
+                        <td><%= form.experience %></td>
+                        <td><%= form.reasonforadoption %></td>
+                        <td><%= form.legalagreementaccepted ? 'Yes' : 'No' %></td>
+                        <td><%= form.status %></td>
+                        <td><%= new Date(form.cdate).toDateString() %></td>
+                    </tr>
+                <% }) %>
+            </tbody>
+        </table>
+    <% } %>
+</body>
+</html>
