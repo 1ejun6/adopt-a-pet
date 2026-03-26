@@ -13,6 +13,7 @@
 
     <h1>Your Applications</h1>
 
+    <% if (user && user.length > 0) { %>
     <% user.forEach(function(application) { %>
         <hr>
         <p>Reference ID: <%= application._id %></p>
@@ -22,13 +23,16 @@
         <p><strong>Agreed to Terms:</strong> <%= application.legalagreementaccepted ? 'Yes' : 'No' %></p>
         <p>Submitted on: <%= new Date(application.cdate).toDateString() %></p>
 
-        <a href="/adoption/update?id=<%= application._id %>">Update</a>
+        <a href="/customer/adoption-application/update?id=<%= application._id %>">Update</a>
 
-        <form action="/adoption/<%= application._id %>/delete" method="POST" style="display:inline;"
+        <form action="/customer/adoption-application/<%= application._id %>/delete" method="POST"
             onsubmit="return confirm('Are you sure you want to delete this application?');">
             <button type="submit">Delete</button>
         </form>
     <% }) %>
+<% } else { %>
+    <p>No applications found.</p>
+<% } %>
 
 </body>
 </html>

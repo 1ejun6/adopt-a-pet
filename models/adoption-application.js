@@ -50,13 +50,12 @@ exports.addForm = function (data) {
         experience: data.experience,
         reasonforadoption: data.reasonforadoption,
         legalagreementaccepted: data.legalagreementaccepted,
-        status: 'pending'
     });
 }
 
 // read
 exports.findByID = function(id) {
-    return Adoptions.find({ uid: id })
+    return Adoptions.find({ uid: new mongoose.Types.ObjectId(id) })
 }
 
 exports.findAll = function() {
@@ -69,7 +68,12 @@ exports.findByApplicationID = function(id) {
 
 // update
 exports.updateForm = function(id, data) {
-    return Adoptions.updateOne({ _id: id }, { $set: data })
+    return Adoptions.updateOne({ _id: id }, { $set: {
+        housingtype: data.housingtype,
+        experience: data.experience,
+        reasonforadoption: data.reasonforadoption,
+        legalagreementaccepted: data.legalagreementaccepted === 'true'
+    }})
 }
 
 

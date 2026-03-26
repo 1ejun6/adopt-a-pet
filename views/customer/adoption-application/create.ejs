@@ -9,10 +9,11 @@
   <%- include('../../navbar') %>
   <% if (m) { %><p style="color:green;"><%= m %></p><% } %>
   <% if (e) { %><p style="color:red;"><%= e %></p><% } %>
-  
-  <strong><u>Pet Adoption Application</u></strong>
 
-  <form action="/adoption/create" method="POST">
+  <form action="/customer/adoption-application/create" method="POST">
+    <input type="hidden" name="pet" value="<%= pid %>">
+    <strong><u>Pet Adoption Application</u></strong>
+    <br><br>
 
     <label for="housingtype">Housing Type *</label><br>
     <select id="housingtype" name="housingtype" required>
@@ -25,14 +26,14 @@
 
     <label for="experience">Years of experience with pets *</label><br>
     <textarea id="experience" name="experience" rows="4" cols="50"
-      placeholder="E.g. 2 years" required></textarea>
+      placeholder="E.g. 2 years" required></textarea><br><br>
 
     <label for="reasonforadoption">Why do you want to adopt? *</label><br>
     <textarea id="reasonforadoption" name="reasonforadoption" rows="4" cols="50"
-      placeholder="Tell us why you'd like to adopt a pet..." required></textarea>
+      placeholder="Tell us why you'd like to adopt a pet..." required></textarea><br><br>
 
 
-    <strong><u>5. Legal Agreement</u></strong> 
+    <strong><u>5. Legal Agreement</u></strong><br>
 
       By submitting this application, I confirm that all information provided is accurate and truthful.
       I understand that submitting false information may result in rejection of my application.
@@ -40,7 +41,7 @@
       visit or follow-up check by the organisation if deemed necessary. I acknowledge that the
       organisation reserves the right to decline any application without providing reasons. My personal
       data will be collected and used solely for the purposes of processing this adoption application,
-      in accordance with the Personal Data Protection Act (PDPA) of Singapore.
+      in accordance with the Personal Data Protection Act (PDPA) of Singapore.<br>
 
     <input type="checkbox" id="legalagreementaccepted" name="legalagreementaccepted" value="true" required />
     <label for="legalagreementaccepted">I have read and agree to the terms and conditions above *</label><br><br>

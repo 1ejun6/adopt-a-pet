@@ -1,10 +1,16 @@
-const Adopt = require("../models/form.js")
+const mongoose = require('mongoose')
+const Adopt = require("../models/adoption-application.js")
 
 // CREATE
 const getcreateform = async (req, res) => {
     try {
-        res.render('customer/form/create', {
+        const pid = req.query.pet || null
+        if (!pid) {
+            return res.redirect('/customer/pet')
+        }
+        res.render('customer/adoption-application/create', {
             user: req.session.user,
+            pid: pid,
             m: undefined,
             e: undefined
         })
@@ -16,14 +22,19 @@ const getcreateform = async (req, res) => {
 
 const createform = async (req, res) => {
     try {
-        let data = req.body
         const userID = req.session.user.id
-        data["uid"] = userID
-        data["pid"] = data.pet
-        await Adopt.addForm(data)
-        res.redirect(`/adoption/user?id=${userID}&msg=submitted`)
+        const formData = {
+            uid: new mongoose.Types.ObjectId(userID),
+            pid: new mongoose.Types.ObjectId(req.body.pet),
+            housingtype: req.body.housingtype,
+            experience: req.body.experience,
+            reasonforadoption: req.body.reasonforadoption,
+            legalagreementaccepted: req.body.legalagreementaccepted === 'true'
+        }
+        await Adopt.addForm(formData)
+        res.redirect(`/customer/adoption-application/read?id=${userID}&msg=submitted`)
     } catch (err) {
-        console.error(err)
+        console.error('CREATEFORM ERROR:', err)  // change this line
         res.redirect('/')
     }
 }
@@ -32,8 +43,11 @@ const createform = async (req, res) => {
 const readform = async (req, res) => {
     try {
         let id = req.query.id
+        if (!id) {
+            return res.redirect('/customer/pet')
+        }
         let data = await Adopt.findByID(id)
-        res.render('customer/form/read', { user: data, msg: req.query.msg || null })
+        res.render('customer/adoption-application/read', { user: data, msg: req.query.msg || null })
     } catch (err) {
         console.error(err)
         res.redirect('/')
@@ -45,7 +59,7 @@ const getupdateform = async (req, res) => {
     try {
         let id = req.query.id
         let data = await Adopt.findByApplicationID(id)
-        res.render('customer/form/update', {
+        res.render('customer/adoption-application/update', {
             user: data,
             m: undefined,
             e: undefined
@@ -61,7 +75,7 @@ const updateform = async (req, res) => {
         const appID = req.query.id
         const userID = req.session.user.id
         await Adopt.updateForm(appID, req.body)
-        res.redirect(`/adoption/user?id=${userID}`)
+        res.redirect(`/customer/adoption-application/read?id=${userID}`)
     } catch (err) {
         console.error(err)
         res.redirect('/')
@@ -72,7 +86,7 @@ const updateform = async (req, res) => {
 const deleteform = async (req, res) => {
     try {
         await Adopt.deleteForm(req.params.id)
-        res.redirect(`/adoption/user?id=${req.session.user.id}`)
+        res.redirect(`/customer/adoption-application/read?id=${req.session.user.id}`)
     } catch (err) {
         console.error(err)
         res.redirect('/')
