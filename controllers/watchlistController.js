@@ -18,8 +18,7 @@ async function cleanRanking(userId) {
             }
         }));
 
-        const updateRanking = await Watchlist.bulkWrite(bulkUpdate);
-        if (!updateRanking) throw new Error("Bulk update failure");
+        await Watchlist.bulkWrite(bulkUpdate);
         return true;
     } catch (error) {
         console.error(`[Watchlist controller] Error reranking for user ${userId}: ${error}`);
@@ -58,10 +57,7 @@ exports.index = async (req, res) => {
             if (!watchlist) throw new Error("Could not get updated watchlist");
 
             alertMessage = "Oh no! The following pet(s) are no longer available: ";
-            missingPets.forEach(pet => {
-                alertMessage += pet.petName;
-                alertMessage += " ";
-            });
+            alertMessage += missingPets.map(pet => pet.petName).join(", ");
         };
 
         res.render("customer/watchlist/index", { watchlist, alertMessage, name });
@@ -94,7 +90,8 @@ exports.processCreatedPets = async (req, res) => {
         const petId = body.split("/")[1];
         const comments = result[body];
         const pet = await Pet.getPetbyPID(petId);
-        const maxRanking = await Watchlist.countDocuments({ userId });
+        const rawMaxRanking = await Watchlist.findOne({ userId }).sort({ ranking: -1 });
+        const maxRanking = rawMaxRanking ? rawMaxRanking.ranking : 0;
         if (!pet) return res.render("customer/watchlist/fill-info", { pet: null, exists: null });
         const exists = await Watchlist.findOne({ petId, userId }).lean();
         if (!exists) {
@@ -110,11 +107,12 @@ exports.processCreatedPets = async (req, res) => {
         } else {
             const updatePet = await Watchlist.findOneAndUpdate(
                 { petId, userId },
-                { $set: { comments: comments } },
+                { $set: { comments: comments, lastUpdated: new Date() } },
                 { returnDocument: "after" }
             );
             if (!updatePet) throw new Error("Could not update comments of pet")
         };
+        await cleanRanking(userId);
 
         res.redirect('/customer/watchlist');
     } catch (error) {
@@ -160,50 +158,50 @@ exports.processUpdate = async (req, res) => {
 
         await updateComments(userId, body);
 
-        const missingPets = watchlist
-            .filter(entry => entry.petId === null || entry.petId === undefined);
-        if (missingPets.length > 0) return res.redirect("/customer/watchlist");
-
         const actionKey = Object.keys(body).find(key =>
-            key === "submit" ||
-            key.startsWith('Delete') ||
+            key === "Submit" ||
+            key === 'DeleteSelected' ||
+            key === "AddSelected" ||
             key.startsWith("Up") ||
-            key.startsWith("Down") ||
-            key.startsWith("Add")
+            key.startsWith("Down")
         );
 
         if (actionKey) {
-            if (actionKey.startsWith("Delete")) {
-                await handleDelete(userId, actionKey);
+            if (actionKey === "DeleteSelected") {
+                await handleDelete(userId, body);
             } else if (actionKey.startsWith("Up")) {
                 await handleMove(userId, actionKey, "Up");
             } else if (actionKey.startsWith("Down")) {
                 await handleMove(userId, actionKey, "Down");
-            } else if (actionKey.startsWith("Add")) {
-                await handleCreate(userId, actionKey);
-            } else if (actionKey === 'submit') {
+            } else if (actionKey === "AddSelected") {
+                await handleCreate(userId, body);
+            } else if (actionKey === 'Submit') {
                 return res.redirect('/customer/watchlist');
             }
         };
+
+        watchlist = await Watchlist.find({ userId })
+            .sort({ ranking: 1 })
+            .populate('petId')
+            .lean();
+
+        const missingPets = watchlist
+            .filter(entry => entry.petId === null || entry.petId === undefined);
+        if (missingPets.length > 0) return res.redirect("/customer/watchlist");
 
         res.redirect('/customer/watchlist/update');
     } catch (error) {
         res.render("error", { e: error });
     };
 
-    async function handleDelete(userId, actionKey) {
-        const petId = actionKey.split("/")[1];
-        if (!petId) throw new Error("Invalid delete: missing pet ID");
-        const entry = await Watchlist.findOne({ userId, petId });
-        if (!entry) throw new Error("Entry to delete not found");
-        const result = await Watchlist.deleteOne({ userId, petId });
-        if (result.deletedCount !== 1) throw new Error("Could not delete entry");
-        const updateRank = await Watchlist.updateMany(
-            { userId: userId, ranking: { $gt: entry.ranking } },
-            { $inc: { ranking: -1 } }
-        );
-        if (!updateRank) throw new Error("Could not update rankings!");
+    async function handleDelete(userId, body) {
+        const petIdsToDelete = Object.keys(body)
+            .filter(key => key.startsWith("Delete/"))
+            .map(key => key.split("/")[1]);
+        await Watchlist.deleteMany({ userId: userId, petId: { $in: petIdsToDelete } });
+        await cleanRanking(userId);
     };
+
     async function handleMove(userId, actionKey, direction) {
         const petId = actionKey.split('/')[1];
         if (!petId) throw new Error("Missing pet ID");
@@ -217,45 +215,49 @@ exports.processUpdate = async (req, res) => {
         const otherEntry = await Watchlist.findOne({ userId, ranking: targetRank });
         if (!otherEntry) throw new Error(`No entry at rank ${targetRank}`);
 
-        currentEntry.ranking = 0;
-        currentEntry.save();
-        const updateOther = await Watchlist.updateOne(
-            { userId: userId, ranking: targetRank },
-            { $set: { ranking: currentRank, lastUpdated: new Date() } },
-            { runValidators: true }
-        );
-        const updateCurrent = await Watchlist.updateOne(
-            { userId: userId, ranking: 0 },
-            { $set: { ranking: targetRank, lastUpdated: new Date() } },
-            { runValidators: true }
-        );
-        if (!updateOther || !updateCurrent) throw new Error("Could not swap ranking");
-
+        await Watchlist.bulkWrite([
+            {
+                updateOne: {
+                    filter: { _id: currentEntry._id },
+                    update: { $set: { ranking: targetRank, lastUpdated: new Date() } }
+                }
+            }, {
+                updateOne: {
+                    filter: { _id: otherEntry._id },
+                    update: { $set: { ranking: currentRank, lastUpdated: new Date() } }
+                }
+            }
+        ]);
     };
-    async function handleCreate(userId, actionKey) {
-        const petId = actionKey.split("/")[1];
-        if (!petId) throw new Error("Missing pet ID");
 
-        const pet = await Pet.getPetbyPID(petId);
-        if (!pet) throw new Error("Pet no longer available/not found");
-
-        const newRank = await Watchlist.countDocuments({ userId }) + 1;
-        if (!newRank) throw new Error("Could not retrieve watchlist length");
-
-        const createNew = await Watchlist.create({
-            petId: petId,
-            userId: userId,
-            lastUpdated: new Date(),
-            comments: body[petId],
-            ranking: newRank,
-            petName: pet.name
-        });
-
-        if (!createNew) throw new Error("Unable to add new pet to watchlist");
+    async function handleCreate(userId, body) {
+        const petIdsToCreate = Object.keys(body)
+            .filter(key => key.startsWith("Add/"))
+            .map(key => key.split("/")[1]);
+        const petsToCreate = [];
+        const rawMaxRanking = await Watchlist.findOne({ userId }).sort({ ranking: -1 });
+        const maxRanking = rawMaxRanking ? rawMaxRanking.ranking : 0;
+        let i = 0;
+        for (const id of petIdsToCreate) {
+            i++;
+            const pet = await Pet.getPetbyPID(id);
+            if (!pet) throw new Error("Could not retrieve pet");
+            petsToCreate.push({
+                userId: userId,
+                petId: id,
+                lastUpdated: new Date(),
+                ranking: maxRanking + i,
+                comments: body[id],
+                petName: pet.name
+            });
+        };
+        await Watchlist.insertMany(petsToCreate);
+        await cleanRanking(userId);
     };
 
     async function updateComments(userId, body) {
-        const entries = await Watchlist.find({ userId }).lean();
+        const allEntries = await Watchlist.find({ userId }).lean();
+        const entries = allEntries.filter(entry => entry.petId !== null);
 
         const operations = [];
         for (const entry of entries) {

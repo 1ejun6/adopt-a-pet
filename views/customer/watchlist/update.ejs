@@ -21,14 +21,14 @@
       </tr>
       <tr>
         <th colspan="6">
-          Press to return: <button type="submit" name="submit">Return</button>
+          Press to return: <button type="submit" name="Submit">Return</button>
         </th>
       </tr>
       <tr>
         <th colspan="2">Pet</th>
         <th>Your Comments</th>
         <th colspan="2">Adjust Ranking</th>
-        <th>Delete</th>
+        <th><button type="submit" name="DeleteSelected">DELETE</button></th>
       </tr>
       <% watchlist.forEach((entry, i) => { %>
       <tr>
@@ -52,7 +52,7 @@
         <th>N.A.</th>
         <th>N.A.</th>
         <% } %>
-        <th><button type="submit" name="Delete/<%=entry.petId._id%>">Delete</button>
+        <th><input type="checkbox" name="Delete/<%=entry.petId._id%>"></input>
         </th>
       </tr>
       <% }) %>
@@ -63,7 +63,7 @@
       <tr>
         <th colspan="3">Pet</th>
         <th colspan="2">Your Comments</th>
-        <th>Add</th>
+        <th><button type="submit" name="AddSelected">ADD</button></th>
       </tr>
       <% remainingPets.forEach(entry=> { %>
       <tr>
@@ -81,7 +81,7 @@
 
         <td colspan="2"><textarea name="<%=entry._id%>" rows="4" cols="20"></textarea>
         </td>
-        <td><button type="submit" name="Add/<%=entry._id%>">Add</button></td>
+        <th><input type="checkbox" name="Add/<%=entry._id%>"></input></th>
       </tr>
       <% }); %>
       <% }; %>
