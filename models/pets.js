@@ -14,6 +14,10 @@ const petSchema = new mongoose.Schema(
             type : Number,
             required : true,
         },
+        ageUnit : {
+            type : String,
+            required : true,
+        },
         gender: {
             type : String,
             required : true
@@ -48,8 +52,9 @@ exports.createPet = (pet) => {
 }
 
 //Read
-exports.getAllPets = () => {
-    return Pet.find();
+exports.getAllPets = async (opts = {}) => {
+    const { query = {} } = opts;
+    return await Pet.find(query).lean();
 }
 
 //Update
