@@ -42,7 +42,7 @@
                             <tr>
                                 <td><label for="age"><strong>Age</strong></label></td>
                                 <td>
-                                    <input type="number" id="age" name="age" step="1" value=<%= currentPet.age %> required>
+                                    <input type="number" id="age" name="age" min="1" step="1" value=<%= currentPet.age %> required>
                                     <select name="ageUnit" required>
                                         <option value="year" <%= currentPet && currentPet.ageUnit.startsWith("year") ? 'selected' : '' %>>years old</option>
                                         <option value="month" <%= currentPet && currentPet.ageUnit.startsWith("month") ? ' selected' : '' %>>months old</option>
@@ -68,7 +68,7 @@
 
                             <tr>
                                 <td><label>Weight</label></td>
-                                <td><input type="number" name="weight" step="0.1" value="<%= currentPet.weight %>"
+                                <td><input type="number" name="weight" min="0" step="0.1" value="<%= currentPet.weight %>"
                                         required></td>
                             </tr>
 
