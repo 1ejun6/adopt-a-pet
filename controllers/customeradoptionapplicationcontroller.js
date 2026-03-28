@@ -1,96 +1,133 @@
 const mongoose = require('mongoose')
-const Adopt = require("../models/adoption-application.js")
+const Adopt = require('../models/adoption-application.js')
+const Pet = require('../models/pets.js')
 
-// CREATE
-const getcreateform = async (req, res) => {
+const getcreateadoptionapplication = async (req, res) => {
     try {
         const pid = req.query.pet || null
         if (!pid) {
             return res.redirect('/customer/pet')
         }
-        res.render('customer/adoption-application/create', {
-            user: req.session.user,
+
+        const pet = await Pet.getPetbyPID(pid)
+        if (!pet) {
+            return res.redirect('/customer/pet')
+        }
+
+        return res.render('customer/adoption-application/create', {
             pid: pid,
-            m: undefined,
-            e: undefined
+            pet: pet,
+            m: null,
+            e: null
         })
     } catch (err) {
-        console.error(err)
-        res.redirect('/')
+        console.log(err)
+        return res.redirect('/')
     }
 }
 
-const createform = async (req, res) => {
+const createadoptionapplication = async (req, res) => {
     try {
         const userID = req.session.user.id
-        const formData = {
+        const adoptionapplicationData = {
             uid: new mongoose.Types.ObjectId(userID),
             pid: new mongoose.Types.ObjectId(req.body.pet),
             housingtype: req.body.housingtype,
-            experience: req.body.experience,
+            experience: Number(req.body.experience),
             reasonforadoption: req.body.reasonforadoption,
             legalagreementaccepted: req.body.legalagreementaccepted === 'true'
         }
-        await Adopt.addForm(formData)
-        res.redirect(`/customer/adoption-application/read?id=${userID}&msg=submitted`)
+        await Adopt.addAdoptionApplication(adoptionapplicationData)
+        return res.redirect('/customer/adoption-application')
     } catch (err) {
-        console.error('CREATEFORM ERROR:', err)  // change this line
-        res.redirect('/')
+        console.log(err)
+        return res.redirect('/')
     }
 }
 
-// READ
-const readform = async (req, res) => {
+const readadoptionapplications = async (req, res) => {
     try {
-        let id = req.query.id
-        if (!id) {
-            return res.redirect('/customer/pet')
-        }
-        let data = await Adopt.findByID(id)
-        res.render('customer/adoption-application/read', { user: data, msg: req.query.msg || null })
-    } catch (err) {
-        console.error(err)
-        res.redirect('/')
-    }
-}
-
-// UPDATE
-const getupdateform = async (req, res) => {
-    try {
-        let id = req.query.id
-        let data = await Adopt.findByApplicationID(id)
-        res.render('customer/adoption-application/update', {
-            user: data,
-            m: undefined,
-            e: undefined
+        const userID = req.session.user.id
+        const adoptionapplications = await Adopt.findByID(userID)
+        return res.render('customer/adoption-application/read', {
+            adoptionapplications,
+            m: null,
+            e: null
         })
     } catch (err) {
-        console.error(err)
-        res.redirect('/')
+        console.log(err)
+        return res.redirect('/')
     }
 }
 
-const updateform = async (req, res) => {
-    try {
-        const appID = req.query.id
+const handleaction = async (req, res) => {
+    const action = req.query.action
+    const aid = req.query.aid
+
+    if (!aid) {
         const userID = req.session.user.id
-        await Adopt.updateForm(appID, req.body)
-        res.redirect(`/customer/adoption-application/read?id=${userID}`)
-    } catch (err) {
-        console.error(err)
-        res.redirect('/')
+        const adoptionapplications = await Adopt.findByID(userID)
+        return res.render('customer/adoption-application/read', {
+            adoptionapplications,
+            m: null,
+            e: 'Please select an adoptionapplication first.'
+        })
     }
+
+    if (action === 'update') {
+        return res.redirect('/customer/adoption-application/edit/' + aid)
+    }
+
+    if (action === 'delete') {
+        try {
+            await Adopt.deleteAdoptionApplication(aid)
+            return res.redirect('/customer/adoption-application')
+        } catch (err) {
+            console.log(err)
+            return res.render('error', { e: 'Error deleting adoptionapplication' })
+        }
+    }
+
+    return res.render('error', { e: 'Invalid action. Please use update or delete.' })
 }
 
-// DELETE
-const deleteform = async (req, res) => {
+const getupdateadoptionapplication = async (req, res) => {
     try {
-        await Adopt.deleteForm(req.params.id)
-        res.redirect(`/customer/adoption-application/read?id=${req.session.user.id}`)
+        const adoptionapplication = await Adopt.findByAdoptionApplicationID(req.params.id)
+        if (!adoptionapplication) {
+            return res.redirect('/customer/adoption-application')
+        }
+
+        return res.render('customer/adoption-application/update', {
+            adoptionapplication,
+            pet: adoptionapplication.pid || null,
+            m: null,
+            e: null
+        })
     } catch (err) {
-        console.error(err)
-        res.redirect('/')
+        console.log(err)
+        return res.redirect('/')
     }
 }
 
-module.exports = { getcreateform, createform, readform, getupdateform, updateform, deleteform }
+const updateadoptionapplication = async (req, res) => {
+    try {
+        await Adopt.updateAdoptionApplication(req.params.id, req.body)
+        return res.redirect('/customer/adoption-application')
+    } catch (err) {
+        console.log(err)
+        return res.redirect('/')
+    }
+}
+
+const deleteadoptionapplication = async (req, res) => {
+    try {
+        await Adopt.deleteAdoptionApplication(req.params.id)
+        return res.redirect('/customer/adoption-application')
+    } catch (err) {
+        console.log(err)
+        return res.redirect('/')
+    }
+}
+
+module.exports = { getcreateadoptionapplication, createadoptionapplication, readadoptionapplications, handleaction, getupdateadoptionapplication, updateadoptionapplication, deleteadoptionapplication }

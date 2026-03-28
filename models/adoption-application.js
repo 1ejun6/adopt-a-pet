@@ -8,7 +8,7 @@ const adoptionSchema = new mongoose.Schema({
     },
     pid: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'pets',
+        ref: 'Pet',
         required: true
     },
     status: {
@@ -18,11 +18,11 @@ const adoptionSchema = new mongoose.Schema({
     },
     housingtype: {
         type: String,
-        enum: ['hdb', 'condo', 'landed', 'other'],
+        enum: ['hdb', 'condo', 'landed'],
         required: [true, 'Housing type is required']
     },
     experience: {
-        type: String,
+        type: Number,
         required: [true, 'Please state your experience']
     },
     reasonforadoption: {
@@ -39,10 +39,10 @@ const adoptionSchema = new mongoose.Schema({
     }
 });
 
-const Adoptions = mongoose.model('Adoptions', adoptionSchema, 'adoptions');
+const Adoptions = mongoose.model('Adoptions', adoptionSchema, 'adoptionapplications');
 
 // create
-exports.addForm = function (data) {
+exports.addAdoptionApplication = function (data) {
     return Adoptions.create({
         uid: data.uid,
         pid: data.pid,
@@ -55,30 +55,32 @@ exports.addForm = function (data) {
 
 // read
 exports.findByID = function(id) {
-    return Adoptions.find({ uid: new mongoose.Types.ObjectId(id) })
+    return Adoptions.find({ uid: new mongoose.Types.ObjectId(id) }).populate('pid')
 }
 
 exports.findAll = function() {
-    return Adoptions.find()
+    return Adoptions.find().populate('uid').populate('pid')
 }
 
-exports.findByApplicationID = function(id) {
-    return Adoptions.findOne({ _id: id })
+exports.findByAdoptionApplicationID = function(id) {
+    return Adoptions.findOne({ _id: id }).populate('uid').populate('pid')
 }
 
 // update
-exports.updateForm = function(id, data) {
+exports.updateAdoptionApplication = function(id, data) {
     return Adoptions.updateOne({ _id: id }, { $set: {
         housingtype: data.housingtype,
-        experience: data.experience,
+        experience: Number(data.experience),
         reasonforadoption: data.reasonforadoption,
         legalagreementaccepted: data.legalagreementaccepted === 'true'
     }})
 }
 
-
-// delete
-exports.deleteForm = function(id) {
-    return Adoptions.deleteOne({ _id: id })
+exports.updateStatus = function(id, status) {
+    return Adoptions.updateOne({ _id: id }, { $set: { status: status } })
 }
 
+// delete
+exports.deleteAdoptionApplication = function(id) {
+    return Adoptions.deleteOne({ _id: id })
+}

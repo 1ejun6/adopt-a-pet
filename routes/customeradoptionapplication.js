@@ -4,21 +4,16 @@ const { authenticated, customer } = require('../middleware')
 
 const router = express.Router()
 
-// CREATE
-router.get('/create', authenticated, customer, customeradoptionapplicationcontroller.getcreateform)
-router.post('/create', authenticated, customer, customeradoptionapplicationcontroller.createform)
+router.get('/create', authenticated, customer, customeradoptionapplicationcontroller.getcreateadoptionapplication)
+router.post('/create', authenticated, customer, customeradoptionapplicationcontroller.createadoptionapplication)
 
+router.get('/', authenticated, customer, customeradoptionapplicationcontroller.readadoptionapplications)
 
-// READ
-router.get('/read', authenticated, customer, customeradoptionapplicationcontroller.readform)
+router.get('/action', authenticated, customer, customeradoptionapplicationcontroller.handleaction)
 
-// UPDATE
-router.get('/update', authenticated, customer, customeradoptionapplicationcontroller.getupdateform)
-router.post('/update', authenticated, customer, customeradoptionapplicationcontroller.updateform)
+router.get('/edit/:id', authenticated, customer, customeradoptionapplicationcontroller.getupdateadoptionapplication)
+router.post('/edit/:id', authenticated, customer, customeradoptionapplicationcontroller.updateadoptionapplication)
 
-// DELETE
-router.post('/:id/delete', authenticated, customer, customeradoptionapplicationcontroller.deleteform)
+router.post('/delete/:id', authenticated, customer, customeradoptionapplicationcontroller.deleteadoptionapplication)
 
 module.exports = router
-
-

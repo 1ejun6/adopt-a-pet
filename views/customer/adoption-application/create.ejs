@@ -10,6 +10,17 @@
   <% if (m) { %><p style="color:green;"><%= m %></p><% } %>
   <% if (e) { %><p style="color:red;"><%= e %></p><% } %>
 
+  <div style="display:flex; align-items:center; gap:20px; margin-bottom:20px; padding:15px;">
+    <% if (pet.imageURL) { %>
+      <img src="<%= pet.imageURL %>" alt="<%= pet.name %>" style="width:150px; height:150px">
+    <% } %>
+    <div>
+      <h2><%= pet.name %></h2>
+      <p><%= pet.species %> | <%= pet.gender %> | <%= pet.age %> years old</p>
+      <p><%= pet.description %></p>
+    </div>
+  </div>
+
   <form action="/customer/adoption-application/create" method="POST">
     <input type="hidden" name="pet" value="<%= pid %>">
     <strong><u>Pet Adoption Application</u></strong>
@@ -17,35 +28,32 @@
 
     <label for="housingtype">Housing Type *</label><br>
     <select id="housingtype" name="housingtype" required>
-      <option value="">Select your housing type</option> 
-      <option value="hdb">HDB Flat</option>      
+      <option value="">Select your housing type</option>
+      <option value="hdb">HDB Flat</option>
       <option value="condo">Condominium</option>
       <option value="landed">Landed Property</option>
-      <option value="other">Other</option>
     </select><br><br>
 
-    <label for="experience">Years of experience with pets *</label><br>
-    <textarea id="experience" name="experience" rows="4" cols="50"
-      placeholder="E.g. 2 years" required></textarea><br><br>
+    <label for="experience">Years of Experience with Pets *</label><br>
+    <input type="number" id="experience" name="experience" min="0" required><br><br>
 
     <label for="reasonforadoption">Why do you want to adopt? *</label><br>
     <textarea id="reasonforadoption" name="reasonforadoption" rows="4" cols="50"
       placeholder="Tell us why you'd like to adopt a pet..." required></textarea><br><br>
 
+    <strong><u>Legal Agreement</u></strong><br>
 
-    <strong><u>5. Legal Agreement</u></strong><br>
-
-      By submitting this application, I confirm that all information provided is accurate and truthful.
-      I understand that submitting false information may result in rejection of my application.
+      By submitting this adoptionapplication, I confirm that all information provided is accurate and truthful.
+      I understand that submitting false information may result in rejection of my adoptionapplication.
       I agree to provide a safe, loving, and permanent home for the adopted pet. I consent to a home
       visit or follow-up check by the organisation if deemed necessary. I acknowledge that the
-      organisation reserves the right to decline any application without providing reasons. My personal
-      data will be collected and used solely for the purposes of processing this adoption application,
+      organisation reserves the right to decline any adoptionapplication without providing reasons. My personal
+      data will be collected and used solely for the purposes of processing this adoptionapplication,
       in accordance with the Personal Data Protection Act (PDPA) of Singapore.<br>
 
     <input type="checkbox" id="legalagreementaccepted" name="legalagreementaccepted" value="true" required />
     <label for="legalagreementaccepted">I have read and agree to the terms and conditions above *</label><br><br>
-    <button type="submit">Submit Application</button>
+    <button type="submit">Submit Adoption Application</button>
 
   </form>
 </body>

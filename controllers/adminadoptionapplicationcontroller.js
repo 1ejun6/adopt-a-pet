@@ -1,19 +1,56 @@
-const Adopt = require("../models/adoption-application.js")
+const Adopt = require('../models/adoption-application.js')
 
-const getadminallforms = async (req, res) => {
+const getadminadoptionapplications = async (req, res) => {
     try {
-        const forms = await Adopt.findAll()
+        const adoptionapplications = await Adopt.findAll()
         return res.render('admin/adoption-application/index', {
-            forms,
+            adoptionapplications,
             e: null
         })
     } catch (err) {
-        console.error(err)
+        console.log(err)
         return res.render('admin/adoption-application/index', {
-            forms: [],
-            e: 'error loading applications'
+            adoptionapplications: [],
+            e: 'error loading adoptionapplications'
         })
     }
 }
 
-module.exports = { getadminallforms }
+const getupdateadoptionapplication = async (req, res) => {
+    try {
+        const paramid = req.params.id
+        const queryid = req.query.aid
+
+        if (!paramid && queryid) {
+            return res.redirect('/admin/adoption-application/edit/' + queryid)
+        }
+
+        const id = paramid || queryid
+        if (!id) {
+            return res.redirect('/admin/adoption-application')
+        }
+        const adoptionapplication = await Adopt.findByAdoptionApplicationID(id)
+        if (!adoptionapplication) {
+            return res.redirect('/admin/adoption-application')
+        }
+        return res.render('admin/adoption-application/update', {
+            adoptionapplication,
+            e: null
+        })
+    } catch (err) {
+        console.log(err)
+        return res.redirect('/admin/adoption-application')
+    }
+}
+
+const updateadoptionapplication = async (req, res) => {
+    try {
+        await Adopt.updateStatus(req.params.id, req.body.status)
+        return res.redirect('/admin/adoption-application')
+    } catch (err) {
+        console.log(err)
+        return res.render('error', { e: 'error updating adoption application status' })
+    }
+}
+
+module.exports = { getadminadoptionapplications, getupdateadoptionapplication, updateadoptionapplication }
