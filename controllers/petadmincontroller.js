@@ -129,21 +129,33 @@ exports.showUpdatePet = async (req, res) => {
     }
 }
 
-exports.deletePet = async (req, res) => {
-    const pid = req.query.pid;
-
-    if (!pid) {
-        return res.render("error", { e: "Please select a pet!" });
-    }
-
+exports.deletePets = async (req, res) => {
     try {
-        const currentPet = await pet.getPetbyPID(pid);
-        await pet.deletePet(pid);
-        
+        let pids = req.query.pid;
+
+        if (!pids) {
+            return res.render("error", { e: 'Select at least one pet to delete!' });
+        }
+
+        if (!Array.isArray(pids)) {
+            pids = [pids];
+        }
+
+        const deletepets = await pet.getPetsByIds(pids);
+
+        const arraynames = deletepets.map(p => p.name);
+
+        await pet.deletePetsByIds(pids);
+
         const pets = await pet.getAllPets();
-        return res.render("admin/pet/read", { pets, m: `You have deleted pet ${currentPet.name} successfully!`, e: null, filters: [] });
-    } catch (e) {
-        return res.render("error", { e: "Error deleting pet" });
+        return res.render("admin/pet/read", {
+            pets,
+            m: `You have deleted ${arraynames.join(', ')} successfully!`,
+            e: null,
+            filters: []
+        });
+    } catch (error) {
+        return res.render("error", { e: 'Error deleting pet(s)!'});
     }
 }
 
@@ -155,7 +167,7 @@ exports.handlePetAction = async (req, res) => {
     }
 
     if (action === "delete") {
-        return exports.deletePet(req, res);
+        return exports.deletePets(req, res);
     }
 
     return res.render("error", { e: "Invalid pet action. Please use update or delete." });

@@ -62,6 +62,16 @@ exports.updatePet = (_id, petData) => {
     return Pet.updateOne({_id}, petData);
 }
 
+//Get IDS
+exports.getPetsByIds = (ids) => {
+    return Pet.find({ _id: { $in: ids } }).select('name').lean();
+}
+
+//Delete Many
+exports.deletePetsByIds = (ids) => {
+    return Pet.deleteMany({ _id: { $in: ids } });
+}
+
 //Delete
 exports.deletePet = (_id) => {
     return Pet.deleteOne({ _id });

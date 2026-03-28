@@ -63,7 +63,7 @@
         <% pets.forEach( pet => { %>
             <tr>
                 <td style="text-align:center; vertical-align:middle;">
-                    <input type="radio" name="pid" value="<%= pet._id.toString() %>" onchange="enablebutton()">
+                    <input type="checkbox" name="pid" value="<%= pet._id.toString() %>" onchange="enablebutton()">
                 </td>
                 <td><%= pet.name %></td>
                 <td><%= pet.species %></td>
@@ -86,9 +86,18 @@
     </table>
     </form>
     <script>
-        function enablebutton() {
-            document.getElementById('updateButton').disabled = false;
-            document.getElementById('deleteButton').disabled = false;
-        }
+        const ubutton = document.getElementById('updateButton');
+        const dbutton = document.getElementById('deleteButton');
+
+        document.querySelectorAll('input[name="pid"]').forEach(function (c) {
+            c.onchange = function () {
+                const checked = document.querySelectorAll('input[name="pid"]:checked');
+                const count = checked.length;
+
+                // enable / disable buttons
+                ubutton.disabled = count !== 1;
+                dbutton.disabled = count === 0;
+            };
+        });
     </script>
 </html>
