@@ -11,10 +11,12 @@
       <a href="/admin/user">admins</a>
       <a href="/admin/adoption-drives">adoption drives</a>
       <a href="/admin/pet">pet listings</a>
+      <a href="/admin/adoption-application">adoption applications</a>
     <% } else if (user && user.role === 'customer') { %>
       <a href="/customer">home</a>
       <a href="/customer/adoption-drives">adoption drives</a>
       <a href="/customer/pet">adopt a pet</a>
+      <a href="/customer/adoption-application">adoption applications</a>
     <% } %>
   </div>
 

@@ -68,4 +68,4 @@ async function updateaccount(req, res) {
     }
 }
 
-module.exports = {dashboard, readaccount, updateview, updateaccount};
+module.exports = { dashboard, readaccount, updateview, updateaccount };

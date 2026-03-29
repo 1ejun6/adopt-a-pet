@@ -1,0 +1,42 @@
+<html>
+    <%- include('../../navbar') %>
+    <% if (m) { %><p style="color:green;"><%= m %></p><% } %>
+    <% if (e) { %><p style="color:red;"><%= e %></p><% } %>
+    <h1>My Adoption Application</h1>
+    <form action="/customer/adoption-application/action" method="GET">
+    <div style="display:flex; justify-content:flex-end; align-items:center; gap:8px; margin-bottom:12px;">
+        <button type="submit" name="action" value="update">Update</button>
+        <button type="submit" name="action" value="delete">Delete</button>
+    </div>
+    <% if (adoptionapplications && adoptionapplications.length > 0) { %>
+    <table border="1">
+        <tr>
+            <th style="width:30px; text-align:center; vertical-align:middle;"></th>
+            <th>Reference ID</th>
+            <th>Housing Type</th>
+            <th>Experience (yrs)</th>
+            <th>Reason for Adoption</th>
+            <th>Agreed to Terms</th>
+            <th>Status</th>
+            <th>Submitted On</th>
+        </tr>
+        <% adoptionapplications.forEach(adoptionapplication => { %>
+            <tr>
+                <td style="text-align:center; vertical-align:middle;">
+                    <input type="radio" name="aid" value="<%= adoptionapplication._id.toString() %>">
+                </td>
+                <td><%= adoptionapplication._id %></td>
+                <td><%= adoptionapplication.housingtype %></td>
+                <td><%= adoptionapplication.experience %></td>
+                <td><%= adoptionapplication.reasonforadoption %></td>
+                <td><%= adoptionapplication.legalagreementaccepted ? 'Yes' : 'No' %></td>
+                <td><%= adoptionapplication.status %></td>
+                <td><%= new Date(adoptionapplication.cdate).toDateString() %></td>
+            </tr>
+        <% }) %>
+    </table>
+    <% } else { %>
+    <p>No adoption applications found</p>
+    <% } %>
+    </form>
+</html>

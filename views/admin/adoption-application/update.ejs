@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update Adoption Application</title>
+</head>
+<body>
+    <%- include('../../navbar') %>
+
+    <h1>Update Adoption Application</h1>
+
+    <% if (e) { %>
+        <p style="color:red;"><%= e %></p>
+    <% } %>
+
+    <% if (adoptionapplication.pid) { %>
+    <div style="display:flex; align-items:center; gap:20px; margin-bottom:20px; padding:15px;">
+        <% if (adoptionapplication.pid.imageURL) { %>
+          <img src="<%= adoptionapplication.pid.imageURL %>" alt="<%= adoptionapplication.pid.name %>" style="width:150px; height:150px">
+        <% } %>
+        <div>
+          <h2><%= adoptionapplication.pid.name %></h2>
+          <p><%= adoptionapplication.pid.species %> | <%= adoptionapplication.pid.gender %> | <%= adoptionapplication.pid.age %> years old</p>
+          <p><%= adoptionapplication.pid.description %></p>
+        </div>
+    </div>
+    <% } %>
+
+    <hr>
+
+    <h3>Applicant Information</h3>
+    <p><strong>Name:</strong> <%= adoptionapplication.uid ? adoptionapplication.uid.name : 'Unknown' %></p>
+    <p><strong>Email:</strong> <%= adoptionapplication.uid ? adoptionapplication.uid.email : 'Unknown' %></p>
+    <p><strong>Housing Type:</strong> <%= adoptionapplication.housingtype %></p>
+    <p><strong>Experience:</strong> <%= adoptionapplication.experience %> years</p>
+    <p><strong>Reason for Adoption:</strong></p>
+    <p><%= adoptionapplication.reasonforadoption %></p>
+    <p><strong>Agreed to Terms:</strong> <%= adoptionapplication.legalagreementaccepted ? 'Yes' : 'No' %></p>
+
+    <hr>
+
+    <form action="/admin/adoption-application/edit/<%= adoptionapplication._id %>" method="POST">
+        <label for="status"><strong>Status</strong></label><br>
+        <select name="status" id="status" required>
+            <option value="pending" <%= adoptionapplication.status === 'pending' ? 'selected' : '' %>>Pending</option>
+            <option value="approved" <%= adoptionapplication.status === 'approved' ? 'selected' : '' %>>Approved</option>
+            <option value="rejected" <%= adoptionapplication.status === 'rejected' ? 'selected' : '' %>>Rejected</option>
+        </select>
+        <br><br>
+        <button type="submit">Update</button>
+        <a href="/admin/adoption-application">Cancel</a>
+    </form>
+</body>
+</html>
