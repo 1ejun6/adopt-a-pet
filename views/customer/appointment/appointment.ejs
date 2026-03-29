@@ -8,35 +8,56 @@
 <body>
     <%- include('../../navbar') %>
 
+    <h3>Manage Your Bookings</h3>
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+        <div style="display:flex; gap:10px; align-items:center;">
+            <a id="editLink" href="#">
+                <button id="editButton" type="button" name="action" value="update" disabled>Update</button>
+            </a>
+            <form id="deleteForm" action="/customer/appointment/delete" method="POST" style="margin:0;">
+                <input type="hidden" name="appointmentId" id="deleteId">
+                <button id="deleteButton" type="submit" name="action" value="delete" disabled>Delete</button>
+            </form>
+        </div>
+        <form action="/customer/appointment/create" method="GET">
+            <button type="submit">Book Appointment</button>
+        </form>
+    </div>
+
     <% if (user_appointments.length === 0)  { %>
         You have no appointments!
+    
     <% } else { %>
         <h3>Booked Appointments: </h3>
         <table border="1">
             <tr>
+                <th>Select</th>
                 <th>Date</th>
                 <th>Time</th>
                 <th>Location</th>
                 <th>Pet Species / Category</th>
                 <th>Status</th>
-                <th>Edit / Remove<br>Appointment</th>
             <% for (let i=0;i<user_appointments.length;i++) {%>
             </tr>
+                <td>
+                    <input type="radio" name="selectedAppointment" value="<%= user_appointments[i]['_id'] %>" onchange="syncSelection(this.value)">
+                </td>
                 <td><%=(user_appointments[i].appointmentdate).toLocaleString('en-GB', {day: '2-digit',month: '2-digit',year: 'numeric'})%></td>
                 <td><%=user_appointments[i].timeslot%></td>
                 <td><%=user_appointments[i].location%></td>
                 <td><%=user_appointments[i].petspecies%></td>
                 <td><%=user_appointments[i].status%></td>
-                <td>
-                    <a href="/customer/appointment/update?appointmentId=<%=user_appointments[i]['_id']%>">Update</a> <br><br>
-                    <a href="/customer/appointment/delete?appointmentId=<%=user_appointments[i]['_id']%>">Delete</a>
-                </td>
             </tr>
             <% } %>
         </table>
         <% } %>
-    <hr>
-    <h3>Book an appointment!</h3>
-    <a href="/customer/appointment/create">Click here to book</a>
+    <script>
+        function syncSelection(id) {
+            document.getElementById('editLink').href = '/customer/appointment/update?appointmentId=' + id;
+            document.getElementById('deleteId').value = id;
+            document.getElementById('editButton').disabled = false;
+            document.getElementById('deleteButton').disabled = false;
+        }
+    </script>
 </body>
 </html>

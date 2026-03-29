@@ -132,14 +132,26 @@ async function deleteAppointment(req, res, id, m = null, e = null) {
         if (!account) {
             return res.render('error', { e: 'customer account not found' });
         }
-        const appointmentId = req.query.appointmentId;
+        const appointmentId = req.body.appointmentId;
         await appointment.deleteAppointmentById(appointmentId, account._id);
 
-        const user_appointments = await appointment.showAppointments(account._id);
+        return res.redirect('/customer/appointment/');
 
-        const pet_species_list = await pet.getAllSpecies();
+    } catch (error) {
+        console.log(error)
+        return res.render('error', { e: 'error loading your account' });
+    }
+}
 
-        return res.render('customer/appointment/appointment', { m, e, account, user_appointments, pet_species_list });
+async function display_pets_based_on_species(req, res, id, m = null, e = null) {
+    try {
+        const account = await user.findOne({ _id: id, role: 'customer' }).lean();
+        if (!account) {
+            return res.render('error', { e: 'customer account not found' });
+        }
+        const species = req.query.species;
+        const pets = await pet.findPetsBySpecies(species);
+        return res.json(pets);
 
     } catch (error) {
         console.log(error)
@@ -167,8 +179,12 @@ router.post('/update', authenticated, customer, async (req, res) => {
     return updatingAppointment(req, res, req.session.user.id, null, null);
 })
 
-router.get('/delete', authenticated, customer, async (req, res) => {
+router.post('/delete', authenticated, customer, async (req, res) => {
     return deleteAppointment(req, res, req.session.user.id, null, null);
+})
+
+router.get('/pets', authenticated, customer, async (req,res )=> {
+    return display_pets_based_on_species(req, res, req.session.user.id, null, null);
 })
 
 module.exports = router;

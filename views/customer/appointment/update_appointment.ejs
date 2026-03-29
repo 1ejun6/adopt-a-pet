@@ -14,7 +14,7 @@
     <% if (appointment_details) { %>
         <form action="/customer/appointment/update" method="POST">
             <input type="hidden" name="appointmentId" value="<%= appointment_details._id %>">
-            Appointment Date: <input type="date" name="appointmentDate" value="<%=new Date(appointment_details.appointmentdate).toISOString().split('T')[0]%>" required><br>
+            Appointment Date (New Appointment Date must be at least 3 days from today): <input type="date" id="appointmentDate" name="appointmentDate" value="<%=new Date(appointment_details.appointmentdate).toISOString().split('T')[0]%>" required><br>
             Time Slot: <select required name="timeslot">
                 <option value="1100">1100</option>
                 <option value="1300">1300</option>
@@ -25,20 +25,85 @@
             </select> <br>
             Location: 
             <select required name="location">
+                <option value="" disabled selected>-- Select a Location --</option>
                 <option value="Suntec">Suntec</option>
                 <option value="Tampines">Tampines</option>
                 <option value="Jurong East">Jurong East</option>
             </select> <br>
-            Pet Species:
-            <select required name="petspecies">
+            Update pet species you would like to see:
+            <select required name="petspecies" id="petspecies" onchange="fetchPets(this.value)">
+                <option value="" disabled selected>-- Select a Pet Species --</option>
                 <% for (species of pet_species_list) {%>
                     <option value="<%=species%>"><%=species%></option>
                 <% } %>
-            </select>
+            </select> <br>
+            <div id="petTableContainer" style="display:none; margin-top:10px;">
+                <table border="1">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Species</th>
+                            <th>Age</th>
+                            <th>Weight</th>
+                            <th>Health</th>
+                            <th>Status</th>
+                            <th>Description</th>
+                            <th>Photo</th>
+                        </tr>
+                    </thead>
+                    <tbody id="petTableBody"></tbody>
+                </table>
+            </div>
             <br>
-            <button type="submit">Update Booking</button>
+            <button type="submit">Update booking</button>
         </form>
     <% } %>
+    <script>
+        async function fetchPets(species) {
+            if (!species) {
+                document.getElementById('petTableContainer').style.display = 'none';
+                return;
+            }
+
+            const response = await fetch('/customer/appointment/pets?species=' + species);
+
+            if (!response.ok) {
+                alert('Error fetching pets.');
+                return;
+            }
+
+            const pets = await response.json();
+            const tbody = document.getElementById('petTableBody');
+            tbody.innerHTML = '';
+
+            if (pets.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7">No pets found.</td></tr>';
+            } else {
+                pets.forEach(pet => {
+                    const row = `<tr>
+                        <td>${pet.name}</td>
+                        <td>${pet.species}</td>
+                        <td>${pet.age} ${pet.ageUnit}</td>
+                        <td>${pet.weight}</td>
+                        <td>${pet.health}</td>
+                        <td>${pet.status}</td>
+                        <td>${pet.description}</td>
+                        <td><img src="${pet.imageURL}" style="width:130px; height:100px"></td>
+
+                    </tr>`;
+                    tbody.innerHTML += row;
+                });
+            }
+            document.getElementById('petTableContainer').style.display = 'block';
+        }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const today = new Date();
+        today.setDate(today.getDate() + 3);
+        const minDate = today.toISOString().split('T')[0];
+        document.getElementById('appointmentDate').min = minDate;
+    });
+    </script>
 </body>
 
 </html>

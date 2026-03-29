@@ -8,20 +8,23 @@
 <body>
     <%- include('../../navbar') %>
 
-
     <h1>Manage Appointments</h1>
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
         <div style="display:flex; gap:10px; align-items:center;">
-            <form id="deleteForm" action="/admin/appointment/delete" method="GET" style="margin:0;">
-                <button id="deleteButton" type="submit">Delete</button>
+            <select id="statusFilter" onchange="filterTable(this.value)">
+                <option value="all">All</option>
+                <option value="Pending Confirmation">Pending Confirmation</option>
+                <option value="Appointment Confirmed!">Appointment Confirmed</option>
+            </select>
+            <form action="/admin/appointment/search" method="GET">
+                <input type="text" name="user">
+                <button type="submit">Search User</button>
             </form>
         </div>
-        <form action="/admin/appointment/create" method="GET">
-            <button type="submit">Create</button>
-        </form>
-    </div>
+        <button type="submit" form="confirmAppointments">Confirm Appointments</button>
+    </div> <br>
 
-    <form action="/admin/appointment/" method="POST">
+    <form action="/admin/appointment/" method="POST" id="confirmAppointments">
         <table border="1">
             <tr>
                 <th>User</th>
@@ -34,7 +37,7 @@
                 <th>Confirm Appointment?</th>
             </tr>
             <% for (let i=0; i < allAppointments.length; i ++) {%>
-                <tr>
+                <tr class="appointmentRow" data-status="<%= allAppointments[i].status %>">
                     <td><%=users_list[i].name%></td>
                     <td><%=users_list[i].email%></td>
                     <td><%= allAppointments[i].appointmentdate.toLocaleString('en-GB', {day: '2-digit',month: '2-digit',year: 'numeric'}) %></td>
@@ -47,7 +50,19 @@
             <% } %>
         </table>
         <br>
-        <button type="submit">Confirm Selected Appointments</button>
     </form>
+    <script>
+        // script to filter based on status of the appointment - all / appointment confirmed / pending confirmation
+        function filterTable(status) {
+            const rows = document.querySelectorAll('.appointmentRow');
+            rows.forEach(row => {
+                if (status === 'all' || row.dataset.status === status) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        }
+    </script>
 </body>
 </html>

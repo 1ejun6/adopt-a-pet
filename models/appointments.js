@@ -66,3 +66,7 @@ exports.listAllAppointments = () => {
 exports.confirmAppointment = (_id, status) => {
     return Appointment.updateOne({_id: _id}, {status: status});
 }
+
+exports.searchAppointmentByUser = (userid) => {
+    return Appointment.find({ userid: userid });
+}

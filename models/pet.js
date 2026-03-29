@@ -3,11 +3,6 @@ const mongoose = require('mongoose');
 // ======================= to replace? =====================
 const petSchema = new mongoose.Schema(
     {
-        pid : {
-            type : Number,
-            required : true,
-            unique : true,
-        },
         name : {
             type : String,
             required : true,
@@ -19,6 +14,14 @@ const petSchema = new mongoose.Schema(
         age : {
             type : Number,
             required : true,
+        },
+        ageUnit : {
+            type : String,
+            required : true,
+        },
+        gender: {
+            type : String,
+            required : true
         },
         weight : {
             type : Number,
@@ -46,4 +49,8 @@ const Pet = mongoose.model("Pet", petSchema, "pets");
 
 exports.getAllSpecies = () =>  {
     return Pet.distinct('species');
+}
+
+exports.findPetsBySpecies = (species) => {
+    return Pet.find({ species })
 }
