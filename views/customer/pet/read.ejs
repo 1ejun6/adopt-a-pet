@@ -24,20 +24,8 @@
         <% if (pets && pets.length > 0) { %>
         <% pets.forEach( pet => { %>
         <tr>
-            <td style="text-align:center; vertical-align:middle;"><input type="radio" name="pet" value="<%= pet._id.toString() %>"></td>
-            <td><%= pet.name %></td>
-            <td><%= pet.species %></td>
-            <td><%= pet.age %> years old</td>
-            <td><%= pet.gender %></td>
-            <td><%= pet.weight %> kg</td>
-            <td><%= pet.health %></td>
-            <td><%= pet.status %></td>
-            <td><%= pet.description %></td>
-            <td><img width="300" height="250" src="<%= pet.imageURL %>"></td>
-        </tr>
-            <tr>
                 <td style="text-align:center; vertical-align:middle;">
-                    <input type="radio" name="pid" value="<%= pet._id.toString() %>" onchange="enablebutton()">
+                    <input type="radio" name="pet" value="<%= pet._id.toString() %>">
                 </td>
                 <td><%= pet.name %></td>
                 <td><%= pet.species %></td>
