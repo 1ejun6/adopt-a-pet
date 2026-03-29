@@ -23,25 +23,31 @@
                                 <td>
                                     <select id="species" name="species" required>
                                         <option value="" disabled>Select species</option>
-                                        <option value="Dog" <% if (currentPet.species==="Dog" ) { %> selected <% } %>
+                                        <option value="Dog" <% currentPet.species === "Dog" ? 'selected' : '' %>
                                                 >Dog</option>
-                                        <option value="Cat" <% if (currentPet.species==="Cat" ) { %> selected <% } %>
+                                        <option value="Cat" <% currentPet.species === "Cat" ? 'selected' : '' %>
                                                 >Cat</option>
-                                        <option value="Rabbit" <% if (currentPet.species==="Rabbit" ) { %> selected <% }
-                                                %>>Rabbit</option>
-                                        <option value="Bird" <% if (currentPet.species==="Bird" ) { %> selected <% } %>
+                                        <option value="Rabbit" <% currentPet.species === "Rabbit" ? 'selected' : '' %>
+                                                >Rabbit</option>
+                                        <option value="Bird" <% currentPet.species === "Bird" ? 'selected' : '' %>
                                                 >Bird</option>
-                                        <option value="Hamster" <% if (currentPet.species==="Hamster" ) { %> selected <%
-                                                } %>>Hamster</option>
-                                        <option value="Other" <% if (currentPet.species==="Other" ) { %> selected <% }
-                                                %>>Other</option>
+                                        <option value="Hamster" <% currentPet.species === "Hamster" ? 'selected' : '' %>
+                                                >Hamster</option>
+                                        <option value="Other" <% currentPet.species === "Other" ? 'selected' : '' %>
+                                                >Other</option>
                                     </select>
                                 </td>
                             </tr>
 
                             <tr>
-                                <td><label>Age</label></td>
-                                <td><input type="number" name="age" value="<%= currentPet.age %>" required></td>
+                                <td><label for="age"><strong>Age</strong></label></td>
+                                <td>
+                                    <input type="number" id="age" name="age" min="1" step="1" value=<%= currentPet.age %> required>
+                                    <select name="ageUnit" required>
+                                        <option value="year" <%= currentPet && currentPet.ageUnit.startsWith("year") ? 'selected' : '' %>>years old</option>
+                                        <option value="month" <%= currentPet && currentPet.ageUnit.startsWith("month") ? ' selected' : '' %>>months old</option>
+                                    </select>
+                                </td>
                             </tr>
 
                             <tr>
@@ -49,18 +55,20 @@
                                 <td>
                                     <label for="male">
                                         Male
-                                        <input type="radio" id="male" name="gender" value="Male" <%= currentPet.gender === "Male" ? "checked" : "" %>>
+                                        <input type="radio" id="male" name="gender" value="Male"
+                                            <%=currentPet.gender==="Male" ? "checked" : "" %>>
                                     </label>
                                     <label for="female">
                                         Female
-                                        <input type="radio" id="female" name="gender" value="Female" <%= currentPet.gender === "Female" ? "checked" : "" %>>
+                                        <input type="radio" id="female" name="gender" value="Female"
+                                            <%=currentPet.gender==="Female" ? "checked" : "" %>>
                                     </label>
                                 </td>
                             </tr>
 
                             <tr>
                                 <td><label>Weight</label></td>
-                                <td><input type="number" name="weight" step="0.1" value="<%= currentPet.weight %>"
+                                <td><input type="number" name="weight" min="0" step="0.1" value="<%= currentPet.weight %>"
                                         required></td>
                             </tr>
 
@@ -103,6 +111,10 @@
                         <br>
                         <button type="submit">Save Changes</button>
 
+                    </form>
+
+                    <form action="/admin/pet" method="GET">
+                        <button type="submit">Cancel</button>
                     </form>
 
 </html>

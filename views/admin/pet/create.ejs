@@ -33,8 +33,14 @@
                 </td>
               </tr>
               <tr>
-                <td><label for="age"><strong>Age (in Years)</strong></label></td>
-                <td><input type="number" id="age" name="age" step="1" required></td>
+                <td><label for="age"><strong>Age</strong></label></td>
+                <td>
+                  <input type="number" id="age" name="age" min="1" step="1" required>
+                  <select name="ageUnit" required>
+                    <option value="year">years old</option>
+                    <option value="month">months old</option>
+                  </select>
+                </td>
               </tr>
               <tr>
                 <td><strong>Gender</strong></td>

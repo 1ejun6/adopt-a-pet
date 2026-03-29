@@ -3,6 +3,38 @@
     <% if (m) { %><p style="color:green;"><%= m %></p><% } %>
     <% if (e) { %><p style="color:red;"><%= e %></p><% } %>
     <h1>Manage a Pet</h1>
+
+    <!-- Filter -->
+    <form action="/admin/pet" method="GET" style="margin-bottom: 20px;">
+        <input type="text" name="search" style="width: 200px" placeholder="Search by name or description" value="<%= filters && filters.search ? filters.search : '' %>"/>
+        <label>Species:</label>
+        <select name="species" style="margin-right: 10px;">
+            <option value="">All Species</option>
+            <option value="Dog" <%= filters.species === 'Dog' ? 'selected' : '' %>>Dog</option>
+            <option value="Cat" <%= filters.species === 'Cat' ? 'selected' : '' %>>Cat</option>
+            <option value="Rabbit" <%= filters.species === 'Rabbit' ? 'selected' : '' %>>Rabbit</option>
+            <option value="Bird" <%= filters.species === 'Bird' ? 'selected' : '' %>>Bird</option>
+            <option value="Hamster" <%= filters.species === 'Hamster' ? 'selected' : '' %>>Hamster</option>
+            <option value="Other" <%= filters.species === 'Other' ? 'selected' : '' %>>Other</option>
+        </select>
+        <label>Age:</label>
+        <select name="age" style="margin-right: 10px;">
+            <option value="">All Ages</option>
+            <option value="Juniors" <%= filters.age === 'Juniors' ? 'selected' : '' %>>Juniors (&lt;1)</option>
+            <option value="Young" <%= filters.age === 'Young' ? 'selected' : '' %>>Young (1-3)</option>
+            <option value="Adult" <%= filters.age === 'Adult' ? 'selected' : '' %>>Adult (4-7)</option>
+            <option value="Senior" <%= filters.age === 'Senior' ? 'selected' : '' %>>Senior (8+)</option>
+        </select>
+        <label>Gender:</label>
+        <select name="gender" style="margin-right: 10px;">
+            <option value="">All Genders</option>
+            <option value="Male" <%= filters.gender === 'Male' ? 'selected' : '' %>>Male</option>
+            <option value="Female" <%= filters.gender === 'Female' ? 'selected' : '' %>>Female</option>
+        </select>
+        <button type="submit" style="margin-left: 10px;">Filter</button>
+        <a href="/admin/pet" style="margin-left: 10px;">Clear All</a>
+    </form>
+
     <form action="/admin/pet/action" method="GET">
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
         <div>
@@ -11,6 +43,8 @@
         </div>
         <button type="submit" formmethod="get" formaction="/admin/pet/create">Create</button>
     </div>
+
+    <!-- Table Selection -->
     <table border="1">
         <tr>
             <th style="width:30px; text-align:center; vertical-align:middle;"></th>
@@ -24,14 +58,18 @@
             <th>Description</th>
             <th>Photo</th>
         </tr>
+
+        <% if (pets && pets.length > 0) { %>
         <% pets.forEach( pet => { %>
             <tr>
                 <td style="text-align:center; vertical-align:middle;">
-                    <input type="radio" name="pid" value="<%= pet._id.toString() %>" onchange="enablebutton()">
+                    <input type="checkbox" name="pid" value="<%= pet._id.toString() %>" onchange="enablebutton()">
                 </td>
                 <td><%= pet.name %></td>
                 <td><%= pet.species %></td>
-                <td><%= pet.age %> years old</td>
+                <td>
+                    <%= pet.age %> <%= pet.ageUnit %>
+                </td>
                 <td><%= pet.gender %></td>
                 <td><%= pet.weight %> kg</td>
                 <td><%= pet.health %></td>
@@ -40,12 +78,26 @@
                 <td><img width="300" height="250" src="<%= pet.imageURL %>"></td>
             </tr>
         <% }) %>
+        <% } else { %>
+            <tr>
+                <td colspan="10" style="text-align: center">No pets match your search. Try different filters!</td>
+            </tr>
+        <% } %>
     </table>
     </form>
     <script>
-        function enablebutton() {
-            document.getElementById('updateButton').disabled = false;
-            document.getElementById('deleteButton').disabled = false;
-        }
+        const ubutton = document.getElementById('updateButton');
+        const dbutton = document.getElementById('deleteButton');
+
+        document.querySelectorAll('input[name="pid"]').forEach(function (c) {
+            c.onchange = function () {
+                const checked = document.querySelectorAll('input[name="pid"]:checked');
+                const count = checked.length;
+
+                // enable / disable buttons
+                ubutton.disabled = count !== 1;
+                dbutton.disabled = count === 0;
+            };
+        });
     </script>
 </html>
